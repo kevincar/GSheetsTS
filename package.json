@@ -22,5 +22,8 @@
   "bugs": {
     "url": "https://github.com/kevincar/GSheetsTS/issues"
   },
-  "homepage": "https://github.com/kevincar/GSheetsTS#readme"
+  "homepage": "https://github.com/kevincar/GSheetsTS#readme",
+  "devDependencies": {
+    "@types/google-apps-script": "0.0.18"
+  }
 }
