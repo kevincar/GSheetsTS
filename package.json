@@ -25,6 +25,7 @@
   "homepage": "https://github.com/kevincar/GSheetsTS#readme",
   "devDependencies": {
     "@types/google-apps-script": "0.0.18",
-    "@types/node": "^9.4.6"
+    "@types/node": "^9.4.6",
+    "googleapis": "^26.0.1"
   }
 }
