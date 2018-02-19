@@ -25,7 +25,7 @@ fs.readFile('../client_secrets.json', (err: Error, content: any) => {
 function authorize(credentials: IServiceCredentials, callback?: Function): void {
     let jwtClient: googleAuth.JWT = new google.auth.JWT(credentials.client_email, undefined, credentials.private_key, SCOPES);
 
-    jwtClient.authorize((err: Error | null, result: Credentials) => {
+    jwtClient.authorize((err: Error | null, result?: Credentials): void => {
         if(err) {
             throw err;
         }
@@ -46,6 +46,16 @@ function main(authClient: googleAuth.JWT): void {
         auth: authClient,
     };
 
+    let getFilesTask: taskFunc = function(callback: callbackFunc): void { listFiles(callback, drive, options); };
+
+    let tasks: taskFunc[] = [
+        getFilesTask
+    ];
+
+    async.series<any, Error | null>(tasks, (err?: Error | null, results?: any): void => {
+        console.log(results);
+    });
+
     // Get files
     // Check if project is already created
     // Create a Script File with our distribution file
@@ -61,7 +71,7 @@ function main(authClient: googleAuth.JWT): void {
     // Error or success
 }
 
-function listFiles(drive: any, options: any): void {
+function listFiles(callback: callbackFunc, drive: any, options: any): void {
 
     options.pageSize = 10;
     options.fields = "nextPageToken, files(id, name)";
@@ -69,7 +79,7 @@ function listFiles(drive: any, options: any): void {
     drive.files.list(options, (err: Error, response: any) => {
         if(err) throw `Failed to obtain list of files: ${err}`;
 
-        console.log(response.data);
+        callback(null, response.data);
     });
 }
 
@@ -150,3 +160,6 @@ interface IServiceCredentials {
     auth_provider_x509_cert_url: string;
     client_x509_cert_url: string;
 }
+
+type callbackFunc = (err?: Error | null | undefined, result?: any) => void;
+type taskFunc = async.AsyncFunction<any, Error | null>;
