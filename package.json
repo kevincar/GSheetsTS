@@ -24,8 +24,10 @@
   },
   "homepage": "https://github.com/kevincar/GSheetsTS#readme",
   "devDependencies": {
+    "@types/async": "^2.0.47",
     "@types/google-apps-script": "0.0.18",
     "@types/node": "^9.4.6",
+    "async": "^2.6.0",
     "googleapis": "^26.0.1"
   }
 }
