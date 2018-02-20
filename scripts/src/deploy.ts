@@ -1,6 +1,7 @@
 
 import * as fs from 'fs';
 import * as stream from 'stream';
+import * as readline from 'readline';
 import { google } from 'googleapis';
 import * as googleAuth from 'google-auth-library';
 import { Credentials } from '../../node_modules/google-auth-library/build/src/auth/credentials';
@@ -10,19 +11,30 @@ let SCOPES: string[] = [
     'https://www.googleapis.com/auth/script.projects',
     'https://www.googleapis.com/auth/drive',
 ];
-let TOKEN_DIR: string = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + "/.credentials";
-let TOKEN_PATH: string = TOKEN_DIR + '/drive-nodejs-gsheetts-deployment.json';
+// let TOKEN_DIR: string = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + "/.credentials";
+let TOKEN_DIR: string = "../.credentials";
+let TOKEN_PATH: string = TOKEN_DIR + '/gsheetts-deployment.json';
+let SECRETS_PATH: string = "../client_secrets.json";
 
-fs.readFile('../client_secrets.json', (err: Error, content: any) => {
+fs.readFile(SECRETS_PATH, (err: Error, content: any) => {
     if(err) {
         throw `Error loading client secret file: ${err}`;
     }
 
-    let credentials: IServiceCredentials = JSON.parse(content.toString());
-    authorize(credentials, main);
+    let isServiceAccount: boolean = isServiceAccountCredentials(SECRETS_PATH);
+
+
+    if(isServiceAccount) {
+        let serviceAccountCredentials: IServiceCredentials = JSON.parse(content.toString());
+        authorizeServiceAccount(serviceAccountCredentials, main);
+    }
+    else {
+        let clientCredentials: ICredentials = JSON.parse(content.toString());
+        authorizeClientAccount(clientCredentials, main);
+    }
 });
 
-function authorize(credentials: IServiceCredentials, callback?: Function): void {
+function authorizeServiceAccount(credentials: IServiceCredentials, callback?: Function): void {
     let jwtClient: googleAuth.JWT = new google.auth.JWT(credentials.client_email, undefined, credentials.private_key, SCOPES);
 
     jwtClient.authorize((err: Error | null, result?: Credentials): void => {
@@ -36,12 +48,72 @@ function authorize(credentials: IServiceCredentials, callback?: Function): void 
     });
 }
 
+function authorizeClientAccount(credentials: ICredentials, callback: Function): void {
+    let clientSecret: string = credentials.installed.client_secret;
+    let clientId: string = credentials.installed.client_id;
+    let redirectUrl: string = credentials.installed.redirect_uris[0];
+    let authClient: googleAuth.OAuth2Client = new googleAuth.OAuth2Client(clientId, clientSecret, redirectUrl);
+
+    // Check if we have previously stored a token.
+    fs.readFile(TOKEN_PATH, function(err: Error, token: Buffer) {
+        if (err) {
+            getNewToken(authClient, callback);
+        } else {
+            authClient.credentials = JSON.parse(token.toString());
+            callback(authClient);
+        }
+    });
+}
+
+function getNewToken(client: googleAuth.OAuth2Client, callback: Function): void {
+
+    let urlOptions = {
+        access_type: 'offline',
+        scope: SCOPES
+    };
+
+    let authUrl: string = client.generateAuthUrl(urlOptions);
+
+    console.log('Authorize this app by visiting this url: ', authUrl);
+
+    let readLineOptions: readline.ReadLineOptions = {
+        input: process.stdin,
+        output: process.stdout
+    };
+
+    let rl: readline.ReadLine = readline.createInterface(readLineOptions);
+
+    rl.question('Enter the code from that page here: ', function(code: string): void {
+        rl.close();
+
+        client.getToken(code, (err, token): void => {
+            if (err) throw `Error while trying to retrieve access token: ${err}`;
+
+            if(token) {
+                client.credentials = token;
+                storeToken(token);
+                callback(client);
+            }
+        });
+    });
+}
+
+function storeToken(token: Credentials): void {
+    try {
+        fs.mkdirSync(TOKEN_DIR);
+    }
+    catch (err) {
+        if(err.code != 'EEXIST') throw err;
+    }
+
+    fs.writeFileSync(TOKEN_PATH, JSON.stringify(token));
+}
+
 function main(authClient: googleAuth.JWT): void {
     const drive: any = google.drive('v3');
     const script: any = google.script('v1');
 
     const projectName: string = "gsheetsts-deployment";
-    const API_KEY: string = "AIzaSyChgYJgQjkCIy-T0lsaq_oPFex0Thec6ek";
 
     let options: any = {
         auth: authClient,
@@ -67,7 +139,7 @@ function main(authClient: googleAuth.JWT): void {
         isProjectCreated
     ];
 
-    async.waterfall<any, Error | null>(tasks, (err: Error | null, result?: any): void => {
+    async.waterfall<any, Error | null>(tasks, (err?: Error | null, result?: any): void => {
         console.log(result);
     });
 
@@ -175,6 +247,15 @@ function uploadScripts(callback: callbackFunc, script: any, options: any): void 
     script.projects.updateContent(options, {}, (err: Error, response: any): void => {
 
     });
+}
+
+function isServiceAccountCredentials(fileName: string) {
+    let contents: string = fs.readFileSync(fileName).toString();
+    let credentials: Object = JSON.parse(contents);
+    if(credentials.hasOwnProperty("type"))
+        return true;
+
+    return false;
 }
 
 interface ICredentials {
