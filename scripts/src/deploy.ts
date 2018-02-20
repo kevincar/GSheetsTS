@@ -113,30 +113,24 @@ function main(authClient: googleAuth.JWT): void {
     const drive: any = google.drive('v3');
     const script: any = google.script('v1');
 
-    const projectName: string = "gsheetsts-deployment";
+    const scriptID: string = "1cy-5dm0TaeU5Ct8mCJvQEMurrSba6mwUl3pTAPUL67yDf6tv2NOF2_P9";
 
     let options: any = {
         auth: authClient,
     };
 
-    let getFiles: taskFunc = (callback: callbackFunc): void => { listFiles(callback, drive, options); };
-    let isProjectCreated: taskFunc = (results: any, callback: callbackFunc): void => {
-        let files: GoogleAppsScript.Drive.File[] = results.files;
-        let potentialResult: GoogleAppsScript.Drive.File[] = files.filter((file: GoogleAppsScript.Drive.File) => { return file.getName() == projectName; });
-
-        let projectExists: boolean = potentialResult.length > 0;
-        if(projectExists) callback(null, projectExists);
-
-        options.projectName = projectName;
-        createProject(callback, script, options);
-    };
-    let updateProjectScripts: taskFunc = (results: any, callback: callbackFunc): void => {
-
+    let getScript: taskFunc = (result: any, callback: callbackFunc): void => {
+        let scriptOptions = {
+            auth: options.auth,
+            scriptId: scriptID,
+        };
+        script.projects.get(scriptOptions, (err: Error, response: any): void => {
+            callback(null, response.data);
+        });
     };
 
     let tasks: taskFunc[] = [
-        getFiles,
-        isProjectCreated
+        getScript
     ];
 
     async.waterfall<any, Error | null>(tasks, (err?: Error | null, result?: any): void => {
