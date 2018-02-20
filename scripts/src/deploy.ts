@@ -7,8 +7,8 @@ import { Credentials } from '../../node_modules/google-auth-library/build/src/au
 import * as async from 'async';
 
 let SCOPES: string[] = [
+    'https://www.googleapis.com/auth/script.projects',
     'https://www.googleapis.com/auth/drive',
-    'https://www.googleapis.com/auth/drive.readonly'
 ];
 let TOKEN_DIR: string = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + "/.credentials";
 let TOKEN_PATH: string = TOKEN_DIR + '/drive-nodejs-gsheetts-deployment.json';
@@ -41,19 +41,34 @@ function main(authClient: googleAuth.JWT): void {
     const script: any = google.script('v1');
 
     const projectName: string = "gsheetsts-deployment";
+    const API_KEY: string = "AIzaSyChgYJgQjkCIy-T0lsaq_oPFex0Thec6ek";
 
     let options: any = {
         auth: authClient,
     };
 
-    let getFilesTask: taskFunc = function(callback: callbackFunc): void { listFiles(callback, drive, options); };
+    let getFiles: taskFunc = (callback: callbackFunc): void => { listFiles(callback, drive, options); };
+    let isProjectCreated: taskFunc = (results: any, callback: callbackFunc): void => {
+        let files: GoogleAppsScript.Drive.File[] = results.files;
+        let potentialResult: GoogleAppsScript.Drive.File[] = files.filter((file: GoogleAppsScript.Drive.File) => { return file.getName() == projectName; });
+
+        let projectExists: boolean = potentialResult.length > 0;
+        if(projectExists) callback(null, projectExists);
+
+        options.projectName = projectName;
+        createProject(callback, script, options);
+    };
+    let updateProjectScripts: taskFunc = (results: any, callback: callbackFunc): void => {
+
+    };
 
     let tasks: taskFunc[] = [
-        getFilesTask
+        getFiles,
+        isProjectCreated
     ];
 
-    async.series<any, Error | null>(tasks, (err?: Error | null, results?: any): void => {
-        console.log(results);
+    async.waterfall<any, Error | null>(tasks, (err: Error | null, result?: any): void => {
+        console.log(result);
     });
 
     // Get files
@@ -73,12 +88,16 @@ function main(authClient: googleAuth.JWT): void {
 
 function listFiles(callback: callbackFunc, drive: any, options: any): void {
 
-    options.pageSize = 10;
-    options.fields = "nextPageToken, files(id, name)";
+    let listOptions: any = {
+        auth: options.auth,
+        pageSize: 10,
+        fields: "nextPageToken, files(id, name)"
+    };
 
-    drive.files.list(options, (err: Error, response: any) => {
+    drive.files.list(listOptions, (err: Error, response: any) => {
         if(err) throw `Failed to obtain list of files: ${err}`;
 
+        console.log(response.data);
         callback(null, response.data);
     });
 }
@@ -134,6 +153,30 @@ function deleteFile(drive: any, options: any): void {
     });
 }
 
+function createProject(callback: callbackFunc, script: any, options: any): void {
+
+    let fileMetaData: any = {
+        title: options.projectName
+    };
+
+    let createOptions: any = {
+        auth: options.auth,
+        resource: fileMetaData
+    };
+
+    script.projects.create(createOptions, {}, (err: Error, result: any): void => {
+        if(err) throw `Failed to create a project: ${err}`;
+
+        callback(null, result);
+    });
+}
+
+function uploadScripts(callback: callbackFunc, script: any, options: any): void {
+    script.projects.updateContent(options, {}, (err: Error, response: any): void => {
+
+    });
+}
+
 interface ICredentials {
     installed: IInstalled;
 }
@@ -162,4 +205,4 @@ interface IServiceCredentials {
 }
 
 type callbackFunc = (err?: Error | null | undefined, result?: any) => void;
-type taskFunc = async.AsyncFunction<any, Error | null>;
+type taskFunc = (result: any, callback: callbackFunc)=> void;
