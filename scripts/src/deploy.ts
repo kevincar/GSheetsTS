@@ -9,12 +9,14 @@ import * as async from 'async';
 
 let SCOPES: string[] = [
     'https://www.googleapis.com/auth/script.projects',
-    'https://www.googleapis.com/auth/drive',
+    "https://www.googleapis.com/auth/script.external_request"
 ];
 // let TOKEN_DIR: string = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + "/.credentials";
-let TOKEN_DIR: string = "../.credentials";
-let TOKEN_PATH: string = TOKEN_DIR + '/gsheetts-deployment.json';
+let TOKEN_DIR: string = "../";
+let TOKEN_PATH: string = TOKEN_DIR + '/token.json';
 let SECRETS_PATH: string = "../client_secrets.json";
+let SOURCE_FILE: string = "../../dist/main.js"
+let TEST_FUNCTION: string = "runGasTests";
 
 fs.readFile(SECRETS_PATH, (err: Error, content: any) => {
     if(err) {
@@ -109,7 +111,7 @@ function storeToken(token: Credentials): void {
     fs.writeFileSync(TOKEN_PATH, JSON.stringify(token));
 }
 
-function main(authClient: googleAuth.JWT): void {
+function main(authClient: googleAuth.OAuth2Client): void {
     const drive: any = google.drive('v3');
     const script: any = google.script('v1');
 
@@ -120,17 +122,81 @@ function main(authClient: googleAuth.JWT): void {
     };
 
     let getScript: taskFunc = (result: any, callback: callbackFunc): void => {
+        if(!callback) callback = result;
         let scriptOptions = {
             auth: options.auth,
             scriptId: scriptID,
         };
-        script.projects.get(scriptOptions, (err: Error, response: any): void => {
-            callback(null, response.data);
+
+        script.projects.getContent(scriptOptions, (err: Error, response?: any): void => {
+            if(err) throw `Failed to get project: ${err}`;
+            if(response) {
+                callback(null, response.data);
+            }
+        });
+    };
+
+    let updateScript: taskFunc = (result: any, callback: callbackFunc): void => {
+
+        let scriptId: string = scriptID;
+        let source: string = fs.readFileSync(SOURCE_FILE).toString();
+
+        let files: ScriptFile[] = result.files;
+        let potentialManifest: ScriptFile[] = files.filter((file: ScriptFile)=>{return file.name == 'appsscript';});
+        if(potentialManifest.length < 1) throw `Failed to obtain the project manifest`;
+        let manifest: ScriptFile = potentialManifest[0];
+
+        let file: ScriptFile = {
+            name: "main",
+            type: FileType.SERVER_JS,
+            source: source
+        };
+
+        let requestBody: any = {
+            files: [
+                file,
+                manifest
+            ]
+        };
+
+        let request = {
+            auth: authClient,
+            scriptId: scriptId,
+            resource: requestBody
+        };
+
+        script.projects.updateContent(request, (err: Error, response?: any): void => {
+            if(err) throw `Failed to update content: ${err}`;
+
+            if(response)
+                callback(null, "cool");
+        });
+    }
+
+    let runTest: taskFunc = (result: any, callback: callbackFunc): void => {
+
+        let requestBody = {
+            function: TEST_FUNCTION,
+            parameters: [],
+            devMode: false
+        };
+
+        let request = {
+            auth: authClient,
+            scriptId: scriptID,
+            resource: requestBody
+        };
+
+        script.scripts.run(request, (err: Error, response: any): void =>{
+            if(err) throw `Failed to run script: ${err}`;
+            console.log(response.data);
         });
     };
 
     let tasks: taskFunc[] = [
-        getScript
+        getScript,
+        updateScript,
+        runTest
     ];
 
     async.waterfall<any, Error | null>(tasks, (err?: Error | null, result?: any): void => {
@@ -150,97 +216,6 @@ function main(authClient: googleAuth.JWT): void {
 
     // Run the test function to test functionality within the GAS environment
     // Error or success
-}
-
-function listFiles(callback: callbackFunc, drive: any, options: any): void {
-
-    let listOptions: any = {
-        auth: options.auth,
-        pageSize: 10,
-        fields: "nextPageToken, files(id, name)"
-    };
-
-    drive.files.list(listOptions, (err: Error, response: any) => {
-        if(err) throw `Failed to obtain list of files: ${err}`;
-
-        console.log(response.data);
-        callback(null, response.data);
-    });
-}
-
-function createFile(drive: any, options: any): void {
-
-    let fileText: string = "Hey Dude!";
-    let readableStream: stream.Readable = new stream.Readable();
-    readableStream._read = function noop() {};
-    readableStream.push(fileText);
-    readableStream.push(null);
-
-    let fileMetaData = {
-        name: "gsheetsts-test",
-        mimeType: "application/vnd.google-apps.script"
-    };
-
-    let media = {
-        mimeType: "text/plain",
-        body: fs.createReadStream("../../dist/main.js")
-    };
-
-    options.resource = fileMetaData;
-    options.media = media;
-    options.fields = 'id';
-
-    drive.files.create(options, (err: Error, response: any) => {
-        if(err) `Failed to create a script file: ${err}`;
-
-        console.log(response.data);
-    });
-}
-
-function readFile(drive: any, options: any): void {
-
-    options.fileId = "";
-    options.fields = "webContentLink";
-
-    drive.files.get(options, (err: Error, response: any) => {
-        if(err) throw `Couldn't read file: ${err}`;
-
-        console.log(response.data);
-    });
-}
-
-function deleteFile(drive: any, options: any): void {
-    options.fileId = "1emMfkP2P3mqnx_6rHeAZoG0SXqJpbVMtMveA5EGu36Y";
-
-    drive.files.delete(options, (err: Error, response: any) => {
-        if(err) `Failed to delete text file: ${err}`;
-
-        console.log(response.data);
-    });
-}
-
-function createProject(callback: callbackFunc, script: any, options: any): void {
-
-    let fileMetaData: any = {
-        title: options.projectName
-    };
-
-    let createOptions: any = {
-        auth: options.auth,
-        resource: fileMetaData
-    };
-
-    script.projects.create(createOptions, {}, (err: Error, result: any): void => {
-        if(err) throw `Failed to create a project: ${err}`;
-
-        callback(null, result);
-    });
-}
-
-function uploadScripts(callback: callbackFunc, script: any, options: any): void {
-    script.projects.updateContent(options, {}, (err: Error, response: any): void => {
-
-    });
 }
 
 function isServiceAccountCredentials(fileName: string) {
@@ -277,6 +252,34 @@ interface IServiceCredentials {
     token_uri: string;
     auth_provider_x509_cert_url: string;
     client_x509_cert_url: string;
+}
+
+enum FileType {
+    ENUM_TYPE_UNSPECIFIED,
+    SERVER_JS,
+    HTML,
+    JSON,
+}
+
+interface User {
+  "domain": string,
+  "email": string,
+  "name": string,
+  "photoUrl": string
+}
+
+interface FunctionSet {
+  "values": Function[]
+}
+
+interface ScriptFile {
+  "name": string,
+  "type": FileType,
+  "source": string,
+  "lastModifyUser"?: User
+  "createTime"?: string,
+  "updateTime"?: string,
+  "functionSet"?: FunctionSet
 }
 
 type callbackFunc = (err?: Error | null | undefined, result?: any) => void;
