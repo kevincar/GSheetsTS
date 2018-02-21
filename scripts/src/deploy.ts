@@ -8,8 +8,7 @@ import { Credentials } from '../../node_modules/google-auth-library/build/src/au
 import * as async from 'async';
 
 let SCOPES: string[] = [
-    'https://www.googleapis.com/auth/script.projects',
-    "https://www.googleapis.com/auth/script.external_request"
+    "https://www.googleapis.com/auth/script.projects"
 ];
 // let TOKEN_DIR: string = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + "/.credentials";
 let TOKEN_DIR: string = "../";
@@ -18,6 +17,7 @@ let SECRETS_PATH: string = "../client_secrets.json";
 let SOURCE_FILE: string = "../../dist/main.js"
 let TEST_FUNCTION: string = "runGasTests";
 
+console.log("reading secret file");
 fs.readFile(SECRETS_PATH, (err: Error, content: any) => {
     if(err) {
         throw `Error loading client secret file: ${err}`;
@@ -37,6 +37,7 @@ fs.readFile(SECRETS_PATH, (err: Error, content: any) => {
 });
 
 function authorizeServiceAccount(credentials: IServiceCredentials, callback?: Function): void {
+    console.log("Authorizing Service Account... ");
     let jwtClient: googleAuth.JWT = new google.auth.JWT(credentials.client_email, undefined, credentials.private_key, SCOPES);
 
     jwtClient.authorize((err: Error | null, result?: Credentials): void => {
@@ -51,14 +52,17 @@ function authorizeServiceAccount(credentials: IServiceCredentials, callback?: Fu
 }
 
 function authorizeClientAccount(credentials: ICredentials, callback: Function): void {
+    console.log("Authorizing Client Account...");
     let clientSecret: string = credentials.installed.client_secret;
     let clientId: string = credentials.installed.client_id;
     let redirectUrl: string = credentials.installed.redirect_uris[0];
     let authClient: googleAuth.OAuth2Client = new googleAuth.OAuth2Client(clientId, clientSecret, redirectUrl);
 
     // Check if we have previously stored a token.
+    console.log("Reading Token file..");
     fs.readFile(TOKEN_PATH, function(err: Error, token: Buffer) {
         if (err) {
+            console.log("No token found...");
             getNewToken(authClient, callback);
         } else {
             authClient.credentials = JSON.parse(token.toString());
@@ -68,7 +72,7 @@ function authorizeClientAccount(credentials: ICredentials, callback: Function): 
 }
 
 function getNewToken(client: googleAuth.OAuth2Client, callback: Function): void {
-
+    console.log("Getting a new token");
     let urlOptions = {
         access_type: 'offline',
         scope: SCOPES
@@ -119,6 +123,24 @@ function main(authClient: googleAuth.OAuth2Client): void {
 
     let options: any = {
         auth: authClient,
+    };
+
+    let createScript: taskFunc = (result: any, callback: callbackFunc): void => {
+
+        let requestBody = {
+            title: "Test Script"
+        };
+
+        let request = {
+            auth: authClient,
+            resource: requestBody
+        };
+
+        script.projects.create(request, (err: Error, response: any): void => {
+            if(err) throw `Failed to create project: ${err}`;
+
+            console.log(response.data);
+        });
     };
 
     let getScript: taskFunc = (result: any, callback: callbackFunc): void => {
@@ -194,9 +216,10 @@ function main(authClient: googleAuth.OAuth2Client): void {
     };
 
     let tasks: taskFunc[] = [
-        getScript,
-        updateScript,
-        runTest
+        // getScript,
+        // updateScript,
+        // runTest
+        createScript
     ];
 
     async.waterfall<any, Error | null>(tasks, (err?: Error | null, result?: any): void => {
