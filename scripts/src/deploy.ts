@@ -8,7 +8,9 @@ import { Credentials } from '../../node_modules/google-auth-library/build/src/au
 import * as async from 'async';
 
 let SCOPES: string[] = [
-    "https://www.googleapis.com/auth/script.projects"
+    "https://www.googleapis.com/auth/script.projects",
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/spreadsheets"
 ];
 // let TOKEN_DIR: string = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + "/.credentials";
 let TOKEN_DIR: string = "../";
@@ -120,6 +122,8 @@ function main(authClient: googleAuth.OAuth2Client): void {
     const script: any = google.script('v1');
 
     const scriptID: string = "1cy-5dm0TaeU5Ct8mCJvQEMurrSba6mwUl3pTAPUL67yDf6tv2NOF2_P9";
+    const APIID: string = "M-MCi4MaYxiATiBKlHWorqIUwAkX7_p7l";
+
 
     let options: any = {
         auth: authClient,
@@ -199,8 +203,7 @@ function main(authClient: googleAuth.OAuth2Client): void {
 
         let requestBody = {
             function: TEST_FUNCTION,
-            parameters: [],
-            devMode: false
+            devMode: true
         };
 
         let request = {
@@ -211,6 +214,7 @@ function main(authClient: googleAuth.OAuth2Client): void {
 
         script.scripts.run(request, (err: Error, response: any): void =>{
             if(err) throw `Failed to run script: ${err}`;
+            console.log(response.error);
             console.log(response.data);
         });
     };
@@ -218,8 +222,8 @@ function main(authClient: googleAuth.OAuth2Client): void {
     let tasks: taskFunc[] = [
         // getScript,
         // updateScript,
-        // runTest
-        createScript
+        runTest
+        // createScript
     ];
 
     async.waterfall<any, Error | null>(tasks, (err?: Error | null, result?: any): void => {
