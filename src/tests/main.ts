@@ -1,11 +1,10 @@
 /// <reference path="../../node_modules/tsgast/types/gas-tap-lib.d.ts" />
 
-function loadGasTap() {
-	if(typeof(GasTap) === 'undefined') {
-		let libraryURL: string = 'https://raw.githubusercontent.com/kevincar/gast/master/dist/gas-tap-lib.js';
-		let libraryContent: string = UrlFetchApp.fetch(libraryURL).getContentText();
-		eval(libraryContent);
-	}
+// Load GasTap
+if(typeof(GasTap) === 'undefined') {
+	let libraryURL: string = 'https://raw.githubusercontent.com/kevincar/gast/master/dist/gas-tap-lib.js';
+	let libraryContent: string = UrlFetchApp.fetch(libraryURL).getContentText();
+	eval(libraryContent);
 }
 
 function testValdiation(x: number, y: number): number {
@@ -13,7 +12,6 @@ function testValdiation(x: number, y: number): number {
 }
 
 function runGasTests(): string {
-	loadGasTap();
 	let tap: GasTap = new GasTap();
 
 	tap.test('Test Validation', (t: test): void => {
