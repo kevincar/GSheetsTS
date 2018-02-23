@@ -1,13 +1,6 @@
-function main(): void {
+function main(): string {
 	SpreadsheetApp.getActive();
 	Logger.log("Hello, World!");
-}
 
-function runGasTests() {
-
-	let results: any = {
-
-	};
-
-	return results;
+	return Logger.getLog();
 }

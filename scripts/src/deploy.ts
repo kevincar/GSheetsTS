@@ -299,7 +299,7 @@ function main(authClient: googleAuth.OAuth2Client): void {
         updateScript,
         // getDeployments,
         // deployScript,
-        // runTest
+        runTest
         // createScript
     ];
 
@@ -310,7 +310,7 @@ function main(authClient: googleAuth.OAuth2Client): void {
             console.log(err.message);
             process.exit(1);
         }
-        console.log(result);
+        console.log(result.data);
     });
 
     // Get files
