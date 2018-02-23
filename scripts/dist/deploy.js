@@ -7,7 +7,8 @@ var googleAuth = require("google-auth-library");
 var async = require("async");
 var SCOPES = [
     "https://www.googleapis.com/auth/script.projects",
-    "https://www.googleapis.com/auth/script.external_request"
+    "https://www.googleapis.com/auth/script.external_request",
+    "https://www.googleapis.com/auth/spreadsheets"
 ];
 // let TOKEN_DIR: string = (process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE) + "/.credentials";
 var TOKEN_DIR = "../";
@@ -15,8 +16,8 @@ var TOKEN_PATH = TOKEN_DIR + '/token.json';
 var SECRETS_PATH = "../client_secrets.json";
 var SOURCE_FILE = "../../dist/main.js";
 var TEST_FUNCTION = "runGasTests";
+console.log("reading secret file");
 fs.readFile(SECRETS_PATH, function (err, content) {
-    console.log("reading secret file");
     if (err) {
         throw "Error loading client secret file: " + err;
     }
@@ -49,8 +50,10 @@ function authorizeClientAccount(credentials, callback) {
     var redirectUrl = credentials.installed.redirect_uris[0];
     var authClient = new googleAuth.OAuth2Client(clientId, clientSecret, redirectUrl);
     // Check if we have previously stored a token.
+    console.log("Reading Token file..");
     fs.readFile(TOKEN_PATH, function (err, token) {
         if (err) {
+            console.log("No token found...");
             getNewToken(authClient, callback);
         }
         else {
@@ -60,6 +63,7 @@ function authorizeClientAccount(credentials, callback) {
     });
 }
 function getNewToken(client, callback) {
+    console.log("Getting a new token");
     var urlOptions = {
         access_type: 'offline',
         scope: SCOPES
@@ -98,8 +102,23 @@ function main(authClient) {
     var drive = googleapis_1.google.drive('v3');
     var script = googleapis_1.google.script('v1');
     var scriptID = "1cy-5dm0TaeU5Ct8mCJvQEMurrSba6mwUl3pTAPUL67yDf6tv2NOF2_P9";
+    var APIID = "M-MCi4MaYxiATiBKlHWorqIUwAkX7_p7l";
     var options = {
         auth: authClient,
+    };
+    var createScript = function (result, callback) {
+        var requestBody = {
+            title: "Test Script"
+        };
+        var request = {
+            auth: authClient,
+            resource: requestBody
+        };
+        script.projects.create(request, function (err, response) {
+            if (err)
+                throw "Failed to create project: " + err;
+            console.log(response.data);
+        });
     };
     var getScript = function (result, callback) {
         if (!callback)
@@ -150,17 +169,17 @@ function main(authClient) {
     var runTest = function (result, callback) {
         var requestBody = {
             function: TEST_FUNCTION,
-            parameters: [],
             devMode: false
         };
         var request = {
-            auth: authClient,
-            scriptId: scriptID,
-            resource: requestBody
+            auth: authClient
+            // scriptId: scriptID,
+            // resource: requestBody
         };
         script.scripts.run(request, function (err, response) {
             if (err)
                 throw "Failed to run script: " + err;
+            console.log(response.error);
             console.log(response.data);
         });
     };
@@ -168,6 +187,7 @@ function main(authClient) {
         getScript,
         updateScript,
         runTest
+        // createScript
     ];
     async.waterfall(tasks, function (err, result) {
         console.log(result);

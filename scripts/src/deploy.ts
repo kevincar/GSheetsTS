@@ -9,6 +9,7 @@ import * as async from 'async';
 
 let SCOPES: string[] = [
     "https://www.googleapis.com/auth/script.projects",
+    "https://www.googleapis.com/auth/script.deployments",
     "https://www.googleapis.com/auth/script.external_request",
     "https://www.googleapis.com/auth/spreadsheets"
 ];
@@ -118,7 +119,8 @@ function storeToken(token: Credentials): void {
 }
 
 function main(authClient: googleAuth.OAuth2Client): void {
-    const drive: any = google.drive('v3');
+    console.log("Running program...");
+
     const script: any = google.script('v1');
 
     const scriptID: string = "1cy-5dm0TaeU5Ct8mCJvQEMurrSba6mwUl3pTAPUL67yDf6tv2NOF2_P9";
@@ -148,28 +150,34 @@ function main(authClient: googleAuth.OAuth2Client): void {
     };
 
     let getScript: taskFunc = (result: any, callback: callbackFunc): void => {
+        console.log("getting script");
+
         if(!callback) callback = result;
         let scriptOptions = {
             auth: options.auth,
             scriptId: scriptID,
         };
 
+        console.log("calling getContent from API");
         script.projects.getContent(scriptOptions, (err: Error, response?: any): void => {
-            if(err) throw `Failed to get project: ${err}`;
+            if(err) {
+                err.message = `Failed to get script content: ${err}`;
+                return callback(err);
+            }
             if(response) {
-                callback(null, response.data);
+                return callback(null, response.data);
             }
         });
     };
 
     let updateScript: taskFunc = (result: any, callback: callbackFunc): void => {
-
+        console.log("updating scripts");
         let scriptId: string = scriptID;
         let source: string = fs.readFileSync(SOURCE_FILE).toString();
 
         let files: ScriptFile[] = result.files;
         let potentialManifest: ScriptFile[] = files.filter((file: ScriptFile)=>{return file.name == 'appsscript';});
-        if(potentialManifest.length < 1) throw `Failed to obtain the project manifest`;
+        if(potentialManifest.length < 1) callback(new Error(`Failed to obtain the project manifest`));
         let manifest: ScriptFile = potentialManifest[0];
 
         let file: ScriptFile = {
@@ -191,16 +199,79 @@ function main(authClient: googleAuth.OAuth2Client): void {
             resource: requestBody
         };
 
+        console.log("Calling update content API");
         script.projects.updateContent(request, (err: Error, response?: any): void => {
-            if(err) throw `Failed to update content: ${err}`;
+            if(err) {
+                err.message = `Failed to update content: ${err}`;
+                return callback(err);
+            }
 
             if(response)
-                callback(null, "cool");
+                callback(null, manifest);
         });
     }
 
-    let runTest: taskFunc = (result: any, callback: callbackFunc): void => {
+    let getDeployments: taskFunc = (result: any, callback: callbackFunc): void => {
+        if(typeof(result) == "function") callback = result;
+        console.log("Getting deployments");
 
+        let request = {
+            auth: authClient,
+            scriptId: scriptID
+        };
+
+        console.log("calling API for deployments");
+        script.projects.deployments.list(request, (err: Error, response?: any): void => {
+            if(err) {
+                err.message = `Failed to obtain a list of deployments: ${err.message}`;
+                callback(err);
+            }
+
+            response.data.manifest = result;
+            callback(null, response.data);
+        });
+    };
+
+    let deployScript: taskFunc = (result: any, callback: callbackFunc): void => {
+        if(typeof(result) == "function") callback = result;
+
+        console.log("Running depolyment");
+
+        let manifestFile: ScriptFile = result.manifest;
+        const n: number = 2;
+
+        let deploymentConfig = {
+            scriptId: scriptID,
+            versionNumber: result.deployments[n].versionNumber,
+            manifestFileName: manifestFile.name,
+            description: result.deployments[n].description
+        }
+
+        let requestBody = {
+            deploymentConfig
+        };
+
+        let request = {
+            auth: authClient,
+            deploymentId: result.deployments[n].deploymentId,
+            scriptId: scriptID,
+            resource: requestBody
+        };
+
+        console.log(result.deployments);
+        script.projects.deployments.update(request, (err: Error, response?: any): void => {
+            if(err) {
+                err.message = `Failed to deploy: ${err.message}`;
+                callback(err);
+            }
+
+            callback(null, response.data);
+        });
+    };
+
+    let runTest: taskFunc = (result: any, callback: callbackFunc): void => {
+        if(typeof(result) == "function") callback = result;
+        console.log("Running test");
         let requestBody = {
             function: TEST_FUNCTION,
             devMode: true
@@ -208,25 +279,37 @@ function main(authClient: googleAuth.OAuth2Client): void {
 
         let request = {
             auth: authClient,
-            scriptId: scriptID,
+            scriptId: APIID,
             resource: requestBody
         };
 
+        console.log("Calling run API");
         script.scripts.run(request, (err: Error, response: any): void =>{
-            if(err) throw `Failed to run script: ${err}`;
-            console.log(response.error);
-            console.log(response.data);
+            if(err) {
+                err.message = `Failed to run script: ${err.message}`;
+                return callback(err);
+            }
+
+            return callback(null, response);
         });
     };
 
     let tasks: taskFunc[] = [
-        // getScript,
-        // updateScript,
-        runTest
+        getScript,
+        updateScript,
+        // getDeployments,
+        // deployScript,
+        // runTest
         // createScript
     ];
 
+    console.log("Running tasks...");
     async.waterfall<any, Error | null>(tasks, (err?: Error | null, result?: any): void => {
+        if(err) {
+            // console.log(err);
+            console.log(err.message);
+            process.exit(1);
+        }
         console.log(result);
     });
 
