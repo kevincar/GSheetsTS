@@ -3,6 +3,6 @@ node_js:
 - node
 before_install:
 - openssl aes-256-cbc -K $encrypted_46068108dcef_key -iv $encrypted_46068108dcef_iv
-  -in ./scripts/token.json.enc -out ./scripts/token.json -d
-- openssl aes-256-cbc -K $encrypted_46068108dcef_key -iv $encrypted_46068108dcef_iv
   -in ./scripts/client_secrets.json.enc -out ./scripts/client_secrets.json -d
+- openssl aes-256-cbc -K $encrypted_46068108dcef_key -iv $encrypted_46068108dcef_iv
+  -in ./scripts/token.json.enc -out ./scripts/token.json -d
