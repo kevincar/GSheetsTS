@@ -1,3 +1,4 @@
+/// <reference path="../../node_modules/tsgast/index" />
 
 import * as fs from 'fs';
 import * as stream from 'stream';
@@ -318,20 +319,12 @@ function main(authClient: googleAuth.OAuth2Client): void {
             return process.exit(1);
         }
 
-        let testResults: string = data.response.result;
-        console.log(testResults);
+        let summary = data.response.result;
+        let log: string = summary.log;
+        console.log(log);
 
-        let potentialMatch: RegExpMatchArray | null = testResults.match(/, ([0-9]+) failures\n$/i);
-        if(potentialMatch == null) {
-            console.error("Failed to find a match for our failures test");
-            return process.exit(1);
-        }
-        else if(potentialMatch.length < 2) {
-            console.error("Failed to parse results!");
-            return process.exit(1);
-        }
-
-        let nFailures: number = parseInt(potentialMatch[1]);
+        let results: tapResults = summary.results;
+        let nFailures: number = results.nFailed;
 
         if(nFailures != 0) {
             console.error(`${nFailures} failures occured`);

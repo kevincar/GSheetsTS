@@ -1,8 +1,8 @@
-/// <reference path="../../node_modules/tsgast/types/gas-tap-lib.d.ts" />
+/// <reference path="../../node_modules/tsgast/index" />
 
 // Load GasTap
 if(typeof(GasTap) === 'undefined') {
-	let libraryURL: string = 'https://raw.githubusercontent.com/kevincar/gast/master/dist/gas-tap-lib.js';
+	let libraryURL: string = 'https://raw.githubusercontent.com/kevincar/gast/master/index.js';
 	let libraryContent: string = UrlFetchApp.fetch(libraryURL).getContentText();
 	eval(libraryContent);
 }
@@ -22,7 +22,10 @@ function runGasTests(): string {
 		t.equal(observed, expected, 'test validation passed');
 	});
 
-	tap.finish();
+	let tp: tapResults = tap.finish();
 
-	return Logger.getLog();
+	return JSON.stringify({
+		log: Logger.getLog(),
+		results: tp
+	});
 }
