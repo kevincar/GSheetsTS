@@ -5,18 +5,16 @@ function main() {
     return Logger.getLog();
 }
 /// <reference path="../../node_modules/tsgast/types/gas-tap-lib.d.ts" />
-function loadGasTap() {
-    if (typeof (GasTap) === 'undefined') {
-        var libraryURL = 'https://raw.githubusercontent.com/kevincar/gast/master/dist/gas-tap-lib.js';
-        var libraryContent = UrlFetchApp.fetch(libraryURL).getContentText();
-        eval(libraryContent);
-    }
+// Load GasTap
+if (typeof (GasTap) === 'undefined') {
+    var libraryURL = 'https://raw.githubusercontent.com/kevincar/gast/master/dist/gas-tap-lib.js';
+    var libraryContent = UrlFetchApp.fetch(libraryURL).getContentText();
+    eval(libraryContent);
 }
 function testValdiation(x, y) {
     return x + y;
 }
 function runGasTests() {
-    loadGasTap();
     var tap = new GasTap();
     tap.test('Test Validation', function (t) {
         var a = 4;

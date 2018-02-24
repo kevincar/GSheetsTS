@@ -7,6 +7,7 @@ var googleAuth = require("google-auth-library");
 var async = require("async");
 var SCOPES = [
     "https://www.googleapis.com/auth/script.projects",
+    "https://www.googleapis.com/auth/script.deployments",
     "https://www.googleapis.com/auth/script.external_request",
     "https://www.googleapis.com/auth/spreadsheets"
 ];
@@ -99,7 +100,7 @@ function storeToken(token) {
     fs.writeFileSync(TOKEN_PATH, JSON.stringify(token));
 }
 function main(authClient) {
-    var drive = googleapis_1.google.drive('v3');
+    console.log("Running program...");
     var script = googleapis_1.google.script('v1');
     var scriptID = "1cy-5dm0TaeU5Ct8mCJvQEMurrSba6mwUl3pTAPUL67yDf6tv2NOF2_P9";
     var APIID = "M-MCi4MaYxiATiBKlHWorqIUwAkX7_p7l";
@@ -121,27 +122,32 @@ function main(authClient) {
         });
     };
     var getScript = function (result, callback) {
+        console.log("getting script");
         if (!callback)
             callback = result;
         var scriptOptions = {
             auth: options.auth,
             scriptId: scriptID,
         };
+        console.log("calling getContent from API");
         script.projects.getContent(scriptOptions, function (err, response) {
-            if (err)
-                throw "Failed to get project: " + err;
+            if (err) {
+                err.message = "Failed to get script content: " + err;
+                return callback(err);
+            }
             if (response) {
-                callback(null, response.data);
+                return callback(null, response.data);
             }
         });
     };
     var updateScript = function (result, callback) {
+        console.log("updating scripts");
         var scriptId = scriptID;
         var source = fs.readFileSync(SOURCE_FILE).toString();
         var files = result.files;
         var potentialManifest = files.filter(function (file) { return file.name == 'appsscript'; });
         if (potentialManifest.length < 1)
-            throw "Failed to obtain the project manifest";
+            callback(new Error("Failed to obtain the project manifest"));
         var manifest = potentialManifest[0];
         var file = {
             name: "main",
@@ -159,38 +165,102 @@ function main(authClient) {
             scriptId: scriptId,
             resource: requestBody
         };
+        console.log("Calling update content API");
         script.projects.updateContent(request, function (err, response) {
-            if (err)
-                throw "Failed to update content: " + err;
+            if (err) {
+                err.message = "Failed to update content: " + err;
+                return callback(err);
+            }
             if (response)
-                callback(null, "cool");
+                callback(null, manifest);
+        });
+    };
+    var getDeployments = function (result, callback) {
+        if (typeof (result) == "function")
+            callback = result;
+        console.log("Getting deployments");
+        var request = {
+            auth: authClient,
+            scriptId: scriptID
+        };
+        console.log("calling API for deployments");
+        script.projects.deployments.list(request, function (err, response) {
+            if (err) {
+                err.message = "Failed to obtain a list of deployments: " + err.message;
+                callback(err);
+            }
+            response.data.manifest = result;
+            callback(null, response.data);
+        });
+    };
+    var deployScript = function (result, callback) {
+        if (typeof (result) == "function")
+            callback = result;
+        console.log("Running depolyment");
+        var manifestFile = result.manifest;
+        var n = 2;
+        var deploymentConfig = {
+            scriptId: scriptID,
+            versionNumber: result.deployments[n].versionNumber,
+            manifestFileName: manifestFile.name,
+            description: result.deployments[n].description
+        };
+        var requestBody = {
+            deploymentConfig: deploymentConfig
+        };
+        var request = {
+            auth: authClient,
+            deploymentId: result.deployments[n].deploymentId,
+            scriptId: scriptID,
+            resource: requestBody
+        };
+        console.log(result.deployments);
+        script.projects.deployments.update(request, function (err, response) {
+            if (err) {
+                err.message = "Failed to deploy: " + err.message;
+                callback(err);
+            }
+            callback(null, response.data);
         });
     };
     var runTest = function (result, callback) {
+        if (typeof (result) == "function")
+            callback = result;
+        console.log("Running test");
         var requestBody = {
             function: TEST_FUNCTION,
-            devMode: false
+            devMode: true
         };
         var request = {
-            auth: authClient
-            // scriptId: scriptID,
-            // resource: requestBody
+            auth: authClient,
+            scriptId: APIID,
+            resource: requestBody
         };
+        console.log("Calling run API");
         script.scripts.run(request, function (err, response) {
-            if (err)
-                throw "Failed to run script: " + err;
-            console.log(response.error);
-            console.log(response.data);
+            if (err) {
+                err.message = "Failed to run script: " + err.message;
+                return callback(err);
+            }
+            return callback(null, response);
         });
     };
     var tasks = [
         getScript,
         updateScript,
+        // getDeployments,
+        // deployScript,
         runTest
         // createScript
     ];
+    console.log("Running tasks...");
     async.waterfall(tasks, function (err, result) {
-        console.log(result);
+        if (err) {
+            // console.log(err);
+            console.log(err.message);
+            process.exit(1);
+        }
+        console.log(result.data);
     });
     // Get files
     // Check if project is already created

@@ -4,7 +4,7 @@
   "description": "Google Apps Script and SheetsAPIv4 wrappers in TypeScript",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "tsc --project ./scripts && pushd ./scripts/dist && node ./deploy.js && popd"
   },
   "repository": {
     "type": "git",
