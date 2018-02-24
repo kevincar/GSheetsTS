@@ -4,7 +4,7 @@
   "description": "Google Apps Script and SheetsAPIv4 wrappers in TypeScript",
   "main": "index.js",
   "scripts": {
-    "test": "tsc --project ./scripts && pushd ./scripts/dist && node ./deploy.js && popd"
+    "test": "tsc --project ./scripts && cd ./scripts/dist && node ./deploy.js && cd ../../"
   },
   "repository": {
     "type": "git",
