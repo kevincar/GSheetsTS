@@ -29,6 +29,6 @@
     "@types/node": "^9.4.6",
     "async": "^2.6.0",
     "googleapis": "^26.0.1",
-    "tsgast": "^1.0.1"
+    "tsgast": "^1.0.2"
   }
 }
