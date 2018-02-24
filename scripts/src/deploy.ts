@@ -308,9 +308,36 @@ function main(authClient: googleAuth.OAuth2Client): void {
         if(err) {
             // console.log(err);
             console.log(err.message);
-            process.exit(1);
+            return process.exit(1);
         }
-        console.log(result.data);
+        let data = result.data;
+
+        let done: boolean = data.done;
+        if(!done) {
+            console.error("Failed to finish: Done is false");
+            return process.exit(1);
+        }
+
+        let testResults: string = data.response.result;
+        console.log(testResults);
+
+        let potentialMatch: RegExpMatchArray | null = testResults.match(/, ([0-9]+) failures\n$/i);
+        if(potentialMatch == null) {
+            console.error("Failed to find a match for our failures test");
+            return process.exit(1);
+        }
+        else if(potentialMatch.length < 2) {
+            console.error("Failed to parse results!");
+            return process.exit(1);
+        }
+
+        let nFailures: number = parseInt(potentialMatch[1]);
+
+        if(nFailures != 0) {
+            console.error(`${nFailures} failures occured`);
+            return process.exit(1);
+        }
+
     });
 
     // Get files

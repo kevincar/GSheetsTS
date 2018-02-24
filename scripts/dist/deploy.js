@@ -258,9 +258,30 @@ function main(authClient) {
         if (err) {
             // console.log(err);
             console.log(err.message);
-            process.exit(1);
+            return process.exit(1);
         }
-        console.log(result.data);
+        var data = result.data;
+        var done = data.done;
+        if (!done) {
+            console.error("Failed to finish: Done is false");
+            return process.exit(1);
+        }
+        var testResults = data.response.result;
+        console.log(testResults);
+        var potentialMatch = testResults.match(/, ([0-9]+) failures\n$/i);
+        if (potentialMatch == null) {
+            console.error("Failed to find a match for our failures test");
+            return process.exit(1);
+        }
+        else if (potentialMatch.length < 2) {
+            console.error("Failed to parse results!");
+            return process.exit(1);
+        }
+        var nFailures = parseInt(potentialMatch[1]);
+        if (nFailures != 0) {
+            console.error(nFailures + " failures occured");
+            return process.exit(1);
+        }
     });
     // Get files
     // Check if project is already created
