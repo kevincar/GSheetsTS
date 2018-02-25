@@ -1,6 +1,6 @@
-function main(): string {
-	SpreadsheetApp.getActive();
-	Logger.log("Hello, World!");
+function main(): any {
 
-	return Logger.getLog();
+	let ss: Spreadsheet = new Spreadsheet();
+
+	Logger.log(ss);
 }
