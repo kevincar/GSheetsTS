@@ -1,4 +1,5 @@
 "use strict";
+/// <reference path="../../node_modules/tsgast/index" />
 Object.defineProperty(exports, "__esModule", { value: true });
 var fs = require("fs");
 var readline = require("readline");
@@ -256,8 +257,7 @@ function main(authClient) {
     console.log("Running tasks...");
     async.waterfall(tasks, function (err, result) {
         if (err) {
-            // console.log(err);
-            console.log(err.message);
+            console.error(err.message);
             return process.exit(1);
         }
         var data = result.data;
@@ -266,22 +266,26 @@ function main(authClient) {
             console.error("Failed to finish: Done is false");
             return process.exit(1);
         }
-        var testResults = data.response.result;
-        console.log(testResults);
-        var potentialMatch = testResults.match(/, ([0-9]+) failures\n$/i);
-        if (potentialMatch == null) {
-            console.error("Failed to find a match for our failures test");
+        var error = data.error;
+        var response = data.response;
+        if (error) {
+            console.log("ERROR");
+            console.error(error);
             return process.exit(1);
         }
-        else if (potentialMatch.length < 2) {
-            console.error("Failed to parse results!");
+        if (!response) {
+            console.error("No response");
             return process.exit(1);
         }
-        var nFailures = parseInt(potentialMatch[1]);
+        var summary = response.result;
+        var log = summary.log;
+        var results = summary.results;
+        var nFailures = results.nFailed;
         if (nFailures != 0) {
             console.error(nFailures + " failures occured");
             return process.exit(1);
         }
+        return console.log(log);
     });
     // Get files
     // Check if project is already created

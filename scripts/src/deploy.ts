@@ -307,8 +307,7 @@ function main(authClient: googleAuth.OAuth2Client): void {
     console.log("Running tasks...");
     async.waterfall<any, Error | null>(tasks, (err?: Error | null, result?: any): void => {
         if(err) {
-            // console.log(err);
-            console.log(err.message);
+            console.error(err.message);
             return process.exit(1);
         }
         let data = result.data;
@@ -319,9 +318,22 @@ function main(authClient: googleAuth.OAuth2Client): void {
             return process.exit(1);
         }
 
-        let summary = data.response.result;
+        let error: any[] | undefined = data.error;
+        let response: any | undefined = data.response;
+
+        if(error) {
+            console.log("ERROR");
+            console.error(error);
+            return process.exit(1);
+        }
+
+        if(!response) {
+            console.error("No response");
+            return process.exit(1);
+        }
+
+        let summary: any = response.result;
         let log: string = summary.log;
-        console.log(log);
 
         let results: tapResults = summary.results;
         let nFailures: number = results.nFailed;
@@ -331,6 +343,7 @@ function main(authClient: googleAuth.OAuth2Client): void {
             return process.exit(1);
         }
 
+        return console.log(log);
     });
 
     // Get files

@@ -7,25 +7,18 @@ if(typeof(GasTap) === 'undefined') {
 	eval(libraryContent);
 }
 
-function testValdiation(x: number, y: number): number {
-	return x+y;
-}
-
-function runGasTests(): string {
+function runGasTests(): any {
 	let tap: GasTap = new GasTap();
 
-	tap.test('Test Validation', (t: test): void => {
-		let a: number = 4;
-		let b: number = 5;
-		let expected: number = a+b;
-		let observed: number = testValdiation(a, b);
-		t.equal(observed, expected, 'test validation passed');
-	});
+	/*
+	 * INSERT TEST FUNCTIONS HERE.
+	 */
+	testTest(tap);
 
 	let tp: tapResults = tap.finish();
 
-	return JSON.stringify({
+	return {
 		log: Logger.getLog(),
 		results: tp
-	});
+	};
 }

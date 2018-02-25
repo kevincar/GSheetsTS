@@ -4,18 +4,10 @@ function main() {
     Logger.log("Hello, World!");
     return Logger.getLog();
 }
-/// <reference path="../../node_modules/tsgast/types/gas-tap-lib.d.ts" />
-// Load GasTap
-if (typeof (GasTap) === 'undefined') {
-    var libraryURL = 'https://raw.githubusercontent.com/kevincar/gast/master/dist/gas-tap-lib.js';
-    var libraryContent = UrlFetchApp.fetch(libraryURL).getContentText();
-    eval(libraryContent);
-}
 function testValdiation(x, y) {
     return x + y;
 }
-function runGasTests() {
-    var tap = new GasTap();
+function testTest(tap) {
     tap.test('Test Validation', function (t) {
         var a = 4;
         var b = 5;
@@ -23,6 +15,23 @@ function runGasTests() {
         var observed = testValdiation(a, b);
         t.equal(observed, expected, 'test validation passed');
     });
-    tap.finish();
-    return Logger.getLog();
+}
+/// <reference path="../../node_modules/tsgast/index" />
+// Load GasTap
+if (typeof (GasTap) === 'undefined') {
+    var libraryURL = 'https://raw.githubusercontent.com/kevincar/gast/master/index.js';
+    var libraryContent = UrlFetchApp.fetch(libraryURL).getContentText();
+    eval(libraryContent);
+}
+function runGasTests() {
+    var tap = new GasTap();
+    /*
+     * INSERT TEST FUNCTIONS HERE.
+     */
+    testTest(tap);
+    var tp = tap.finish();
+    return {
+        log: Logger.getLog(),
+        results: tp
+    };
 }
