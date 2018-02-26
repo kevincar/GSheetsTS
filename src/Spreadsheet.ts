@@ -64,6 +64,9 @@ class Spreadsheet {
 		this._spreadsheetId = spreadsheetId;
 	}
 
-
+	requestGASSpreadsheet(spreadsheetId: string): GoogleAppsScript.Spreadsheet.Spreadsheet {
+		if(spreadsheetId == this.spreadsheetId) return this.GASSpreadsheet;
+		throw "Invalid spreadsheet ID";
+	}
 
 }
