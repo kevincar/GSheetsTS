@@ -14,7 +14,7 @@ class Sheet {
 	private _formulas: string[][] | null = null;
 	private _formats: Sheets.CellFormat[][] | null = null;
 	private _conditionalFormats: Sheets.ConditionalFormatRule[] | null = null;
-	private _dataValidations: Sheets.DataValidationRule[] | null = null;
+	private _dataValidations: Sheets.DataValidationRule[][] | null = null;
 
 	/*
 	 * Accessors
@@ -127,6 +127,35 @@ class Sheet {
 		this._formats = formats;
 
 		return this._formats;
+	}
+
+	get conditionalFormatRules(): Sheets.ConditionalFormatRule[] {
+		if(this._conditionalFormats != null) return this._conditionalFormats;
+
+		this._conditionalFormats = this.APISheet.conditionalFormats;
+
+		return this._conditionalFormats;
+	}
+
+	get dataValidationRules(): Sheets.DataValidationRule[][] {
+		if(this._dataValidations != null) return this._dataValidations;
+
+		let dataValidations: Sheets.DataValidationRule[][] = new Array();
+
+		this.APISheet.data.forEach((dataSegment: Sheets.GridData): void => {
+			dataSegment.rowData.forEach((rowData: Sheets.RowData, rowN: number): void => {
+				rowData.values.forEach((cellData: Sheets.CellData, columnN: number): void => {
+					let curRow: number = dataSegment.startRow?dataSegment.startRow + rowN:rowN;
+					let curColumn: number = dataSegment.startColumn?dataSegment.startColumn + columnN:columnN;
+					if(dataValidations[curRow] == undefined) dataValidations[curRow] = new Array();
+					dataValidations[curRow][curColumn] = cellData.dataValidation;
+				});
+			});
+		});
+
+		this._dataValidations = dataValidations;
+
+		return this._dataValidations;
 	}
 
 	get nRows(): number {
