@@ -1,8 +1,190 @@
 "use strict";
 function main() {
     var ss = new Spreadsheet();
-    Logger.log(ss);
+    var sheet = new Sheet(ss, "Sheet1");
+    Logger.log(sheet.values);
 }
+/// <reference path="../node_modules/googleapis/build/src/apis/sheets/v4" />
+var Sheet = /** @class */ (function () {
+    /*
+     * Methods
+     */
+    function Sheet(parent, name) {
+        /*
+         * Properties
+         */
+        this._parentSpreadsheet = null;
+        this._GASSheet = null;
+        this._APISheet = null;
+        this._sheetId = null;
+        this._name = null;
+        this._values = null;
+        this._formulas = null;
+        this._formats = null;
+        this._conditionalFormats = null;
+        this._dataValidations = null;
+        this._parentSpreadsheet = parent;
+        this._name = name;
+    }
+    Object.defineProperty(Sheet.prototype, "parentSpreadsheet", {
+        /*
+         * Accessors
+         */
+        get: function () {
+            if (this._parentSpreadsheet != null)
+                return this._parentSpreadsheet;
+            throw "Sheet: Parent Spreadsheet not set!";
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sheet.prototype, "GASSheet", {
+        get: function () {
+            if (this._GASSheet != null)
+                return this._GASSheet;
+            var ss = this.parentSpreadsheet.requestGASSpreadsheet(this.parentSpreadsheet.spreadsheetId);
+            this._GASSheet = ss.getSheetByName(this.name);
+            return this._GASSheet;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sheet.prototype, "APISheet", {
+        get: function () {
+            if (this._APISheet != null)
+                return this._APISheet;
+            var options = {
+                ranges: [
+                    "" + this.name
+                ],
+                includeGridData: true
+            };
+            var ssResponse = Sheets.Spreadsheets.get(this.parentSpreadsheet.spreadsheetId, options);
+            if (ssResponse.sheets.length < 1)
+                throw "APISheet no data found";
+            this._APISheet = ssResponse.sheets[0];
+            return this._APISheet;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sheet.prototype, "sheetId", {
+        get: function () {
+            if (this._sheetId != null)
+                return this._sheetId;
+            this._sheetId = this.APISheet.properties.sheetId;
+            return this._sheetId;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sheet.prototype, "name", {
+        get: function () {
+            if (this._name != null)
+                return this._name;
+            throw "Sheet: Name was never set in constructor!";
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sheet.prototype, "values", {
+        get: function () {
+            var _this = this;
+            if (this._values != null)
+                return this._values;
+            var values = Array();
+            this.APISheet.data.forEach(function (dataSegment) {
+                dataSegment.rowData.forEach(function (rowData, rowN) {
+                    rowData.values.forEach(function (cellData, columnN) {
+                        var curRow = dataSegment.startRow ? dataSegment.startRow + rowN : rowN;
+                        var curColumn = dataSegment.startColumn ? dataSegment.startColumn + columnN : columnN;
+                        if (values[curRow] == undefined)
+                            values[curRow] = new Array();
+                        values[curRow][curColumn] = _this.extractValue(cellData.effectiveValue);
+                    });
+                });
+            });
+            this._values = values;
+            return this._values;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sheet.prototype, "formulas", {
+        get: function () {
+            var _this = this;
+            if (this._formulas != null)
+                return this._formulas;
+            var formulas = Array();
+            this.APISheet.data.forEach(function (dataSegment) {
+                dataSegment.rowData.forEach(function (rowData, rowN) {
+                    rowData.values.forEach(function (cellData, columnN) {
+                        var curRow = dataSegment.startRow ? dataSegment.startRow + rowN : rowN;
+                        var curColumn = dataSegment.startColumn ? dataSegment.startColumn + columnN : columnN;
+                        if (formulas[curRow] == undefined)
+                            formulas[curRow] = new Array();
+                        formulas[curRow][curColumn] = _this.extractValue(cellData.userEnteredValue);
+                    });
+                });
+            });
+            this._formulas = formulas;
+            return this._formulas;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sheet.prototype, "formats", {
+        get: function () {
+            if (this._formats != null)
+                return this._formats;
+            var formats = Array();
+            this.APISheet.data.forEach(function (dataSegment) {
+                dataSegment.rowData.forEach(function (rowData, rowN) {
+                    rowData.values.forEach(function (cellData, columnN) {
+                        var curRow = dataSegment.startRow ? dataSegment.startRow + rowN : rowN;
+                        var curColumn = dataSegment.startColumn ? dataSegment.startColumn + columnN : columnN;
+                        if (formats[curRow] == undefined)
+                            formats[curRow] = new Array();
+                        formats[curRow][curColumn] = cellData.userEnteredFormat;
+                    });
+                });
+            });
+            this._formats = formats;
+            return this._formats;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sheet.prototype, "nRows", {
+        get: function () {
+            return this.APISheet.properties.gridProperties.rowCount;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sheet.prototype, "nColumns", {
+        get: function () {
+            return this.APISheet.properties.gridProperties.columnCount;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Sheet.prototype.extractValue = function (value) {
+        if (value == undefined)
+            return undefined;
+        else if (value.boolValue)
+            return value.boolValue;
+        else if (value.errorValue)
+            return value.errorValue;
+        else if (value.formulaValue)
+            return value.formulaValue;
+        else if (value.numberValue)
+            return value.numberValue;
+        else if (value.stringValue)
+            return value.stringValue;
+    };
+    return Sheet;
+}());
 /// <reference path="../node_modules/googleapis/build/src/apis/sheets/v4" />
 var Spreadsheet = /** @class */ (function () {
     /*
@@ -71,6 +253,11 @@ var Spreadsheet = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    Spreadsheet.prototype.requestGASSpreadsheet = function (spreadsheetId) {
+        if (spreadsheetId == this.spreadsheetId)
+            return this.GASSpreadsheet;
+        throw "Invalid spreadsheet ID";
+    };
     return Spreadsheet;
 }());
 function testValdiation(x, y) {
@@ -99,11 +286,27 @@ function runGasTests() {
      */
     testTest(tap);
     spreadsheetTest(tap);
+    sheetTap(tap);
     var tp = tap.finish();
     return {
         log: Logger.getLog(),
         results: tp
     };
+}
+function sheetTap(tap) {
+    var spreadsheet = new Spreadsheet();
+    var testSheet = new Sheet(spreadsheet, "Sheet1");
+    tap.test("Sheet constructor should set the name", function (t) {
+        var observed = testSheet.name;
+        var expected = "Sheet1";
+        t.equal(observed, expected, "name is set");
+    });
+    tap.test("Sheet values should not be blank", function (t) {
+        var expectedJSON = '[["cage","ID","Ear","BackGround","AP","DOB","Source","Sex","Age","Project ID","Location","Study Name","Note","Sac","Breeding","Request","Genotyping Files","Cre1","Cre2","LF","MT","Td","HF","LT","MG","HKi","EKo","EF","S4Ki","EraT","EOx","AtCe"],["HC819","H2738",1,null,null,42565,"KD #23","M",84.57142857142857,"HF LC Td","ML 415",null,null,42719,null,null,null,"POS",null,null,null,"wt","het",null,null,null,null,null,null,null,null,null],["HC819","H2739",2,null,null,42565,"KD #23","M",84.57142857142857,"HF LC Td","ML 415",null,null,42719,null,null,null,"POS",null,null,null,"wt","homo",null,null,null,null,null,null,null,null,null],["HC819","H2740",3,null,null,42565,"KD #23","M",84.57142857142857,"HF LC Td","ML 415",null,null,42719,null,null,null,"WT",null,null,null,"wt","homo",null,null,null,null,null,null,null,null,null],["HC819","H2741",4,null,null,42565,"KD #23","M",84.57142857142857,"HF LC Td","ML 457","For Breeding",null,42818,42654,null,null,"POS",null,null,null,"het","homo",null,null,null,null,null,null,null,null,null],["HC819","H2742",5,null,null,42565,"KD #23","M",84.57142857142857,"HF LC Td","ML 415",null,null,42719,null,null,null,"POS",null,null,null,"wt","homo",null,null,null,null,null,null,null,null,null],["HC820A","H2743",1,null,null,42565,"KD #23","F",84.57142857142857,"HF LC Td","ML 457","LHA Gq-mCherry-DREADD_Feeding, drinking SNA, BP","Not Found (8/11/2017)",42958,null,null,null,"POS",null,null,null,"het","homo",null,null,null,null,null,null,null,null,null],["HC820","H2744",2,null,null,42565,"KD #23","F",84.57142857142857,"HF LC Td","ML 457","For Breeding",null,42818,42654,null,null,"WT",null,null,null,"het","homo",null,null,null,null,null,null,null,null,null]]';
+        var expected = JSON.parse(expectedJSON);
+        t.deepEqual(JSON.stringify(testSheet.values), expectedJSON, "values are equal");
+        t.notEqual([].length, testSheet.values.length, "values length");
+    });
 }
 function spreadsheetTest(tap) {
     tap.test("Spreadsheet constructor should give us the active spreadsheet", function (t) {

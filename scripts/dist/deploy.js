@@ -282,6 +282,7 @@ function main(authClient) {
         var results = summary.results;
         var nFailures = results.nFailed;
         if (nFailures != 0) {
+            console.log(log);
             console.error(nFailures + " failures occured");
             return process.exit(1);
         }

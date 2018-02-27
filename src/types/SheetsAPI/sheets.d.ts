@@ -214,11 +214,11 @@ declare namespace Sheets {
     }
 
     interface ExtendedValue {
-        numberValue: number,
-        stringValue: string,
-        boolValue: boolean,
-        formulaValue: string,
-        errorValue: ErrorValue
+        numberValue?: number,
+        stringValue?: string,
+        boolValue?: boolean,
+        formulaValue?: string,
+        errorValue?: ErrorValue
     }
 
     interface ErrorValue {

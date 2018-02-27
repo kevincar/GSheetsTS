@@ -74,8 +74,9 @@ class Sheet {
 		this.APISheet.data.forEach((dataSegment: Sheets.GridData): void => {
 			dataSegment.rowData.forEach((rowData: Sheets.RowData, rowN: number): void => {
 				rowData.values.forEach((cellData: Sheets.CellData, columnN: number): void => {
-					let curRow: number = dataSegment.startRow + rowN;
-					let curColumn: number = dataSegment.startColumn + columnN;
+					let curRow: number = dataSegment.startRow?dataSegment.startRow + rowN:rowN;
+					let curColumn: number = dataSegment.startColumn?dataSegment.startColumn + columnN:columnN;
+					if(values[curRow] == undefined) values[curRow] = new Array();
 					values[curRow][curColumn] = this.extractValue(cellData.effectiveValue);
 				});
 			});
@@ -96,6 +97,7 @@ class Sheet {
 				rowData.values.forEach((cellData: Sheets.CellData, columnN: number): void => {
 					let curRow: number = dataSegment.startRow?dataSegment.startRow + rowN:rowN;
 					let curColumn: number = dataSegment.startColumn?dataSegment.startColumn + columnN:columnN;
+					if(formulas[curRow] == undefined) formulas[curRow] = new Array();
 					formulas[curRow][curColumn] = this.extractValue(cellData.userEnteredValue);
 				});
 			});
@@ -104,6 +106,27 @@ class Sheet {
 		this._formulas = formulas;
 
 		return this._formulas;
+	}
+
+	get formats(): Sheets.CellFormat[][] {
+		if(this._formats != null) return this._formats;
+
+		let formats: Sheets.CellFormat[][] = Array();
+
+		this.APISheet.data.forEach((dataSegment: Sheets.GridData): void => {
+			dataSegment.rowData.forEach((rowData: Sheets.RowData, rowN: number): void => {
+				rowData.values.forEach((cellData: Sheets.CellData, columnN: number): void => {
+					let curRow: number = dataSegment.startRow?dataSegment.startRow + rowN:rowN;
+					let curColumn: number = dataSegment.startColumn?dataSegment.startColumn + columnN:columnN;
+					if(formats[curRow] == undefined) formats[curRow] = new Array();
+					formats[curRow][curColumn] = cellData.userEnteredFormat;
+				});
+			});
+		});
+
+		this._formats = formats;
+
+		return this._formats;
 	}
 
 	get nRows(): number {
@@ -124,7 +147,8 @@ class Sheet {
 	}
 
 	private extractValue(value: Sheets.ExtendedValue): any {
-		if(value.boolValue) return value.boolValue;
+		if(value == undefined) return undefined;
+		else if(value.boolValue) return value.boolValue;
 		else if(value.errorValue) return value.errorValue;
 		else if(value.formulaValue) return value.formulaValue;
 		else if(value.numberValue) return value.numberValue;

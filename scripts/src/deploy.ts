@@ -339,6 +339,7 @@ function main(authClient: googleAuth.OAuth2Client): void {
         let nFailures: number = results.nFailed;
 
         if(nFailures != 0) {
+            console.log(log);
             console.error(`${nFailures} failures occured`);
             return process.exit(1);
         }
