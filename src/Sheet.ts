@@ -10,6 +10,11 @@ class Sheet {
 	private _APISheet: Sheets.Sheet | null = null;
 	private _sheetId: number | null = null;
 	private _name: string | null = null;
+	private _values: any[][] | null = null;
+	private _formulas: string[][] | null = null;
+	private _formats: Sheets.CellFormat[][] | null = null;
+	private _conditionalFormats: Sheets.ConditionalFormatRule[] | null = null;
+	private _dataValidations: Sheets.DataValidationRule[] | null = null;
 
 	/*
 	 * Accessors
@@ -48,7 +53,7 @@ class Sheet {
 		return this._APISheet;
 	}
 
-	private get sheetId(): number {
+	get sheetId(): number {
 		if(this._sheetId != null) return this._sheetId;
 
 		this._sheetId = this.APISheet.properties.sheetId;
@@ -56,9 +61,57 @@ class Sheet {
 		return this._sheetId;
 	}
 
-	private get name(): string {
+	get name(): string {
 		if(this._name != null) return this._name;
 		throw "Sheet: Name was never set in constructor!";
+	}
+
+	get values(): any[][] {
+		if(this._values != null) return this._values;
+
+		let values: any[][] = Array();
+
+		this.APISheet.data.forEach((dataSegment: Sheets.GridData): void => {
+			dataSegment.rowData.forEach((rowData: Sheets.RowData, rowN: number): void => {
+				rowData.values.forEach((cellData: Sheets.CellData, columnN: number): void => {
+					let curRow: number = dataSegment.startRow + rowN;
+					let curColumn: number = dataSegment.startColumn + columnN;
+					values[curRow][curColumn] = this.extractValue(cellData.effectiveValue);
+				});
+			});
+		});
+
+		this._values = values;
+
+		return this._values;
+	}
+
+	get formulas(): string[][] {
+		if(this._formulas != null) return this._formulas;
+
+		let formulas: string[][] = Array();
+
+		this.APISheet.data.forEach((dataSegment: Sheets.GridData): void => {
+			dataSegment.rowData.forEach((rowData: Sheets.RowData, rowN: number): void => {
+				rowData.values.forEach((cellData: Sheets.CellData, columnN: number): void => {
+					let curRow: number = dataSegment.startRow?dataSegment.startRow + rowN:rowN;
+					let curColumn: number = dataSegment.startColumn?dataSegment.startColumn + columnN:columnN;
+					formulas[curRow][curColumn] = this.extractValue(cellData.userEnteredValue);
+				});
+			});
+		});
+
+		this._formulas = formulas;
+
+		return this._formulas;
+	}
+
+	get nRows(): number {
+		return this.APISheet.properties.gridProperties.rowCount;
+	}
+
+	get nColumns(): number {
+		return this.APISheet.properties.gridProperties.columnCount;
 	}
 
 	/*
@@ -68,5 +121,14 @@ class Sheet {
 	constructor(parent: Spreadsheet, name: string) {
 		this._parentSpreadsheet = parent;
 		this._name = name;
+	}
+
+	private extractValue(value: Sheets.ExtendedValue): any {
+		if(value.boolValue) return value.boolValue;
+		else if(value.errorValue) return value.errorValue;
+		else if(value.formulaValue) return value.formulaValue;
+		else if(value.numberValue) return value.numberValue;
+		else if(value.stringValue) return value.stringValue;
+
 	}
 }
