@@ -158,6 +158,10 @@ class Sheet {
 		return this._dataValidations;
 	}
 
+	get headers(): any[] {
+		return this.values[0];
+	}
+
 	get nRows(): number {
 		return this.APISheet.properties.gridProperties.rowCount;
 	}
