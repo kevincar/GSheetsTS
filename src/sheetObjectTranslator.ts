@@ -1,4 +1,4 @@
-abstract class sheetObjectTranslator {
+class sheetObjectTranslator {
 	private sheet: Sheet | undefined;
 	private dictionary: Dictionary | undefined;
 
@@ -13,14 +13,18 @@ abstract class sheetObjectTranslator {
 		this.sheet = sheet;
 	}
 
+	// private createObject(ctor: objectConstructor, values: objectInterface): objectInterface {
+	// 	return new ctor(values);
+	// }
+
 	// TODO: figure this out!
-	// translate<sheetObject<T>>(): sheetObject<T>[] {
+	// translate<T>(): objectInterface[] {
 	// 	if(!this.sheet) throw 'Sheet is undefined!';
 	//
 	// 	this.sheet.values.forEach((rowData: any[], index: number): void => {
 	// 		if(index == 0) return;
 	//
-	//
+	// 		let curObject: objectInterface = this.createObject()
 	// 		this.objectPropertyNames.forEach((propertyName: string): void => {
 	// 			if(!this.dictionary) throw 'Dictionary is undfined!';
 	// 			if(!this.sheet) throw 'Sheet is undefined!';
@@ -39,6 +43,10 @@ interface Dictionary {
 }
 
 // TODO: Perhaps some interface for user-defined objects
-interface sheetObject<T> {
-	(properties: T): sheetObject<T>
-}
+// interface objectConstructor {
+// 	new (values: objectInterface): objectInterface;
+// }
+//
+// interface objectInterface {
+// 	[property: string]: any;
+// }
