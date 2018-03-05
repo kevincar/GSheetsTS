@@ -1,6 +1,22 @@
-class sheetObjectTranslator {
+/// <reference path="./SheetObject" />
+
+function f(): void {
+	let ss: Spreadsheet = new Spreadsheet();
+	let mouseSheet: Sheet = new Sheet(ss, "mouse");
+	let mouseObjectDictionary = new SheetObjectDictionary(Mouse);
+	let mouseTranslator = new SheetObjectTranslator(mouseObjectDictionary, mouseSheet, Mouse);
+	return;
+}
+
+class Mouse extends SheetObject {
+	cageId: string = "";
+	id: number = 0;
+}
+
+class SheetObjectTranslator<T extends SheetObjectConstructor> {
 	private sheet: Sheet | undefined;
-	private dictionary: Dictionary | undefined;
+	private objectCtor: T | undefined;
+	private dictionary: SheetObjectDictionary<T> | undefined;
 
 	get objectPropertyNames(): string[] {
 		if(!this.dictionary) throw 'Sheet is undefined!';
@@ -8,23 +24,20 @@ class sheetObjectTranslator {
 		return Object.keys(this.dictionary);
 	}
 
-	constructor(dictionary: Dictionary, sheet: Sheet) {
+	constructor(dictionary: SheetObjectDictionary<T>, sheet: Sheet, objectCtor: T) {
 		this.dictionary = dictionary;
 		this.sheet = sheet;
+		this.objectCtor = objectCtor;
 	}
 
-	// private createObject(ctor: objectConstructor, values: objectInterface): objectInterface {
-	// 	return new ctor(values);
-	// }
-
-	// TODO: figure this out!
-	// translate<T>(): objectInterface[] {
+	// translate(): SheetObjectInstance[] {
 	// 	if(!this.sheet) throw 'Sheet is undefined!';
 	//
 	// 	this.sheet.values.forEach((rowData: any[], index: number): void => {
 	// 		if(index == 0) return;
+	// 		if(!this.objectCtor) throw 'ctor is undefined!';
 	//
-	// 		let curObject: objectInterface = this.createObject()
+	// 		let curObject: SheetObjectInstance = new this.objectCtor();
 	// 		this.objectPropertyNames.forEach((propertyName: string): void => {
 	// 			if(!this.dictionary) throw 'Dictionary is undfined!';
 	// 			if(!this.sheet) throw 'Sheet is undefined!';
@@ -32,21 +45,9 @@ class sheetObjectTranslator {
 	//
 	// 			let columnNumber: number = this.sheet.headers.indexOf(sheetHeader);
 	// 			let propertyValue: any = rowData[columnNumber];
+	//
+	// 			curObject.
 	// 		});
 	// 	});
 	// }
 }
-
-interface Dictionary {
-	// Dictionary[ObjectValue] = SheetHeader;
-	[value: string]: string;
-}
-
-// TODO: Perhaps some interface for user-defined objects
-// interface objectConstructor {
-// 	new (values: objectInterface): objectInterface;
-// }
-//
-// interface objectInterface {
-// 	[property: string]: any;
-// }
