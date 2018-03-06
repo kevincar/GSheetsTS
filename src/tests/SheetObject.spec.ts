@@ -1,6 +1,10 @@
 function sheetObjectTap(tap: GasTap): void {
 
-		
+	let mouse: MouseObject = new MouseObject();
+
+	tap.test("Constructor should work", (t: test) => {
+
+	});		
 
 }
 
