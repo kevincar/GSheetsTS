@@ -1,4 +1,14 @@
 "use strict";
+var __extends = (this && this.__extends) || (function () {
+    var extendStatics = Object.setPrototypeOf ||
+        ({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+        function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+    return function (d, b) {
+        extendStatics(d, b);
+        function __() { this.constructor = d; }
+        d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+    };
+})();
 function main() {
     var ss = new Spreadsheet();
     var sheet = new Sheet(ss, "Sheet1");
@@ -155,6 +165,45 @@ var Sheet = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
+    Object.defineProperty(Sheet.prototype, "conditionalFormatRules", {
+        get: function () {
+            if (this._conditionalFormats != null)
+                return this._conditionalFormats;
+            this._conditionalFormats = this.APISheet.conditionalFormats;
+            return this._conditionalFormats;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sheet.prototype, "dataValidationRules", {
+        get: function () {
+            if (this._dataValidations != null)
+                return this._dataValidations;
+            var dataValidations = new Array();
+            this.APISheet.data.forEach(function (dataSegment) {
+                dataSegment.rowData.forEach(function (rowData, rowN) {
+                    rowData.values.forEach(function (cellData, columnN) {
+                        var curRow = dataSegment.startRow ? dataSegment.startRow + rowN : rowN;
+                        var curColumn = dataSegment.startColumn ? dataSegment.startColumn + columnN : columnN;
+                        if (dataValidations[curRow] == undefined)
+                            dataValidations[curRow] = new Array();
+                        dataValidations[curRow][curColumn] = cellData.dataValidation;
+                    });
+                });
+            });
+            this._dataValidations = dataValidations;
+            return this._dataValidations;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sheet.prototype, "headers", {
+        get: function () {
+            return this.values[0];
+        },
+        enumerable: true,
+        configurable: true
+    });
     Object.defineProperty(Sheet.prototype, "nRows", {
         get: function () {
             return this.APISheet.properties.gridProperties.rowCount;
@@ -184,6 +233,52 @@ var Sheet = /** @class */ (function () {
             return value.stringValue;
     };
     return Sheet;
+}());
+var SheetObject = /** @class */ (function () {
+    function SheetObject() {
+    }
+    return SheetObject;
+}());
+var SheetObjectDictionary = /** @class */ (function () {
+    function SheetObjectDictionary(extendedSheetObject) {
+        var temporaryObject = new extendedSheetObject();
+    }
+    return SheetObjectDictionary;
+}());
+/// <reference path="./SheetObject" />
+function f() {
+    var ss = new Spreadsheet();
+    var mouseSheet = new Sheet(ss, "mouse");
+    var mouseObjectDictionary = new SheetObjectDictionary(Mouse);
+    var mouseTranslator = new SheetObjectTranslator(mouseObjectDictionary, mouseSheet, Mouse);
+    return;
+}
+var Mouse = /** @class */ (function (_super) {
+    __extends(Mouse, _super);
+    function Mouse() {
+        var _this = _super !== null && _super.apply(this, arguments) || this;
+        _this.cageId = "";
+        _this.id = 0;
+        return _this;
+    }
+    return Mouse;
+}(SheetObject));
+var SheetObjectTranslator = /** @class */ (function () {
+    function SheetObjectTranslator(dictionary, sheet, objectCtor) {
+        this.dictionary = dictionary;
+        this.sheet = sheet;
+        this.objectCtor = objectCtor;
+    }
+    Object.defineProperty(SheetObjectTranslator.prototype, "objectPropertyNames", {
+        get: function () {
+            if (!this.dictionary)
+                throw 'Sheet is undefined!';
+            return Object.keys(this.dictionary);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    return SheetObjectTranslator;
 }());
 /// <reference path="../node_modules/googleapis/build/src/apis/sheets/v4" />
 var Spreadsheet = /** @class */ (function () {
@@ -287,6 +382,7 @@ function runGasTests() {
     testTest(tap);
     spreadsheetTest(tap);
     sheetTap(tap);
+    sheetObjectTap(tap);
     var tp = tap.finish();
     return {
         log: Logger.getLog(),
@@ -307,6 +403,110 @@ function sheetTap(tap) {
         t.notEqual([].length, testSheet.formats.length, "format length");
     });
 }
+function sheetObjectTap(tap) {
+    var data = {
+        cageId: "KD1",
+        id: 1,
+        earId: 1,
+        background: null,
+        animalAcct: 3,
+        DOB: new Date("3/6/18"),
+        source: "KD #1",
+        sex: "M",
+        strains: "HF LC Td",
+        location: "ML 457",
+        studyNames: null,
+        notes: null,
+        DOD: null,
+        breedingData: null,
+        Cre1: "POS",
+        Cre2: null,
+        LF: null,
+        MT: null,
+        Td: "wt",
+        HF: "het",
+        LT: null,
+        MG: null,
+        HKi: null,
+        EKo: null,
+        EF: null,
+        S4Ki: null,
+        EraT: null,
+        EOx: null,
+        AtCe: null
+    };
+    var mouse = new MouseObject(data);
+    tap.test("Constructor should work", function (t) {
+        t.equal(mouse.cageId, "KD1", "cageID successfully transfered");
+        t.equal(mouse.id, 1, "id");
+        t.ok(mouse.genotypes, "genotypes should not be null");
+        if (!mouse.genotypes)
+            return;
+        t.equal(typeof (mouse.genotypes.LF), "undefined", "no LF");
+        t.equal(mouse.genotypes.HF, "het", "HF Genotype");
+        t.equal(mouse.genotypes.LC, "POS", "LC genotype");
+    });
+}
+var MouseObject = /** @class */ (function (_super) {
+    __extends(MouseObject, _super);
+    function MouseObject(data) {
+        var _this = _super.call(this) || this;
+        /*
+        * Properties
+        */
+        _this.cageId = null;
+        _this.id = null;
+        _this.earId = null;
+        _this.background = null;
+        _this.animalAcct = null;
+        _this.DOB = null;
+        _this.source = null;
+        _this.sex = null;
+        _this.strains = null;
+        _this.location = null;
+        _this.studyNames = null;
+        _this.notes = null;
+        _this.DOD = null;
+        _this.breedingDate = null;
+        _this.genotypes = null;
+        if (!data)
+            return _this;
+        _this.cageId = data.cageId;
+        _this.id = data.id;
+        _this.earId = data.earId;
+        _this.background = data.background;
+        _this.animalAcct = data.animalAcct;
+        _this.DOB = data.DOB;
+        _this.source = data.source;
+        _this.sex = data.sex;
+        _this.strains = _this.processStrains(data.strains);
+        _this.location = data.location;
+        _this.studyNames = data.studyNames;
+        _this.notes = data.notes;
+        _this.DOD = data.DOD;
+        _this.breedingDate = data.breedingDate;
+        _this.genotypes = _this.strains.reduce(function (curGenotype, curStrain) {
+            var ogStrain = curStrain;
+            if (curStrain.match(/C$/gi) != null)
+                curStrain = "Cre1";
+            curGenotype[ogStrain] = data[curStrain];
+            return curGenotype;
+        }, {});
+        return _this;
+    }
+    MouseObject.prototype.processStrains = function (strainsData) {
+        var strains = strainsData.split(" ");
+        strains = strains.map(function (strain) {
+            //Remove anything between parenthesis; e.g., EOx(L1)
+            strain = strain.replace(/\(.*\)/gi, "");
+            // Remove trailing parenthesis if they exist
+            strain = strain.replace(/[\(|\)]/gi, "");
+            return strain;
+        });
+        return strains;
+    };
+    return MouseObject;
+}(SheetObject));
 function spreadsheetTest(tap) {
     tap.test("Spreadsheet constructor should give us the active spreadsheet", function (t) {
         var expected = "GSheetsTS Test Sheet";

@@ -16,6 +16,7 @@ function runGasTests(): any {
 	testTest(tap);
 	spreadsheetTest(tap);
 	sheetTap(tap);
+	sheetObjectTap(tap);
 
 	let tp: tapResults = tap.finish();
 
