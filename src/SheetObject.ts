@@ -5,8 +5,8 @@ interface SheetObjectInstance {
 
 }
 
-interface SheetObjectConstructor {
-	new (data?: SheetObjectInterface): SheetObjectInstance;
+interface SheetObjectConstructor<T extends SheetObject> {
+	new (data: SheetObjectInterface): T;
 }
 
 abstract class SheetObject implements SheetObjectInstance{}
