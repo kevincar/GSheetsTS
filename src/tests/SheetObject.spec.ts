@@ -1,20 +1,20 @@
 function sheetObjectTap(tap: GasTap): void {
 
 	let data = {
-		cageId: "KD1",
-		id: 1,
-		earId: 1,
-		background: null,
-		animalAcct: 3,
+		cage: "KD1",
+		ID: 1,
+		Ear: 1,
+		BackGround: null,
+		AP: 3,
 		DOB: new Date("3/6/18"),
-		source: "KD #1",
-		sex: "M",
-		strains: "HF LC Td",
-		location: "ML 457",
-		studyNames: null,
-		notes: null,
+		Source: "KD #1",
+		Sex: "M",
+		"Project ID": "HF LC Td",
+		Location: "ML 457",
+		"Study Name": null,
+		Note: null,
 		DOD: null,
-		breedingData: null,
+		Breeding: null,
 		Cre1: "POS",
 		Cre2: null,
 		LF: null,
@@ -66,24 +66,24 @@ class MouseObject extends SheetObject {
 	breedingDate: Date | null = null;
 	genotypes: Genotype | null = null;
 
-	constructor(data: SheetObjectInterface) {
+	constructor(data: SheetObjectInterface | null) {
 		super();
 		if(!data) return;
 
-		this.cageId = data.cageId;
-		this.id = data.id;
-		this.earId = data.earId;
-		this.background = data.background;
-		this.animalAcct = data.animalAcct;
+		this.cageId = data["cage"];
+		this.id = data.ID;
+		this.earId = data.Ear;
+		this.background = data.BackGround;
+		this.animalAcct = data.AP;
 		this.DOB = data.DOB;
-		this.source = data.source;
-		this.sex = data.sex;
-		this.strains = this.processStrains(data.strains);
-		this.location = data.location;
-		this.studyNames = data.studyNames;
-		this.notes = data.notes;
-		this.DOD = data.DOD;
-		this.breedingDate = data.breedingDate;
+		this.source = data.Source;
+		this.sex = data.Sex;
+		this.strains = this.processStrains(data["Project ID"]);
+		this.location = data.Location;
+		this.studyNames = data["Study Name"];
+		this.notes = data.Note;
+		this.DOD = data.Sac;
+		this.breedingDate = data.Breeding;
 		
 		this.genotypes = this.strains.reduce((curGenotype: Genotype, curStrain: string) => {
 			let ogStrain: string = curStrain;

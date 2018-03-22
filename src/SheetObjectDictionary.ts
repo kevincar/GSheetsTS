@@ -12,10 +12,11 @@ class SheetObjectDictionary<T extends SheetObject>{
 
 	translate(): T[] {
 		if(!this.sheet) throw `Sheet is undefined!`;
-		return this.sheet.values.map((rowData: any[], rowIndex: number): T => {
+		let instances: T[] = Array();
+		this.sheet.values.forEach((rowData: any[], rowIndex: number): void => {
 			if(this.ctor == null) throw `undefined constructor`;
 			if(!this.sheet) throw `Sheet is undefined!`;
-			if(rowIndex == 0) return new this.ctor({});
+			if(rowIndex == 0) return;
 
 			let headers: any[] = this.sheet.headers;
 			let data: any = {};
@@ -25,8 +26,9 @@ class SheetObjectDictionary<T extends SheetObject>{
 			});
 
 			let instance: T = new this.ctor(data);
-			return instance;
-
+			instances.push(instance);
 		}); 
+
+		return instances;
 	} 
 }
