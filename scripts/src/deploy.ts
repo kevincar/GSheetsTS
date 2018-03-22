@@ -318,12 +318,19 @@ function main(authClient: googleAuth.OAuth2Client): void {
             return process.exit(1);
         }
 
-        let error: any[] | undefined = data.error;
+        let error: any | undefined = data.error;
         let response: any | undefined = data.response;
 
         if(error) {
             console.log("ERROR");
             console.error(error);
+			console.log("DETAILS");
+			error.details.forEach((detail: any) => {
+				detail.scriptStackTraceElements.forEach((sste: any) => {
+					let objDetails: string = JSON.stringify(sste, null, 4);
+					console.log(objDetails);
+				});	
+			});
             return process.exit(1);
         }
 

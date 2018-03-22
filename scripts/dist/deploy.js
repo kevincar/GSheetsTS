@@ -271,6 +271,13 @@ function main(authClient) {
         if (error) {
             console.log("ERROR");
             console.error(error);
+            console.log("DETAILS");
+            error.details.forEach(function (detail) {
+                detail.scriptStackTraceElements.forEach(function (sste) {
+                    var objDetails = JSON.stringify(sste, null, 4);
+                    console.log(objDetails);
+                });
+            });
             return process.exit(1);
         }
         if (!response) {
