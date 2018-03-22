@@ -31,26 +31,17 @@ interface SheetObjectInterface {
 }
 interface SheetObjectInstance {
 }
-interface SheetObjectConstructor {
-    new (data?: SheetObjectInterface): SheetObjectInstance;
+interface SheetObjectConstructor<T extends SheetObject> {
+    new (data: SheetObjectInterface | null): T;
 }
 declare abstract class SheetObject implements SheetObjectInstance {
 }
-declare class SheetObjectDictionary<T extends SheetObjectConstructor> {
-    constructor(extendedSheetObject: T);
+declare class SheetObjectDictionary<T extends SheetObject> {
+    ctor: SheetObjectConstructor<T> | null;
+    sheet: Sheet | null;
+    constructor(ctor: SheetObjectConstructor<T>, sheet: Sheet);
     [property: string]: any;
-}
-declare function f(): void;
-declare class Mouse extends SheetObject {
-    cageId: string;
-    id: number;
-}
-declare class SheetObjectTranslator<T extends SheetObjectConstructor> {
-    private sheet;
-    private objectCtor;
-    private dictionary;
-    readonly objectPropertyNames: string[];
-    constructor(dictionary: SheetObjectDictionary<T>, sheet: Sheet, objectCtor: T);
+    translate(): T[];
 }
 declare class Spreadsheet {
     private _GASSpreadsheet;
@@ -85,10 +76,11 @@ declare class MouseObject extends SheetObject {
     DOD: Date | null;
     breedingDate: Date | null;
     genotypes: Genotype | null;
-    constructor(data: SheetObjectInterface);
+    constructor(data: SheetObjectInterface | null);
     private processStrains(strainsData);
 }
 interface Genotype {
     [strain: string]: string;
 }
+declare function sheetObjectDictionaryTap(tap: GasTap): void;
 declare function spreadsheetTest(tap: GasTap): void;

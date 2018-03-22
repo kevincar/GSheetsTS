@@ -240,46 +240,78 @@ var SheetObject = /** @class */ (function () {
     return SheetObject;
 }());
 var SheetObjectDictionary = /** @class */ (function () {
-    function SheetObjectDictionary(extendedSheetObject) {
-        var temporaryObject = new extendedSheetObject();
+    function SheetObjectDictionary(ctor, sheet) {
+        this.ctor = null;
+        this.sheet = null;
+        this.ctor = ctor;
+        this.sheet = sheet;
     }
+    SheetObjectDictionary.prototype.translate = function () {
+        var _this = this;
+        if (!this.sheet)
+            throw "Sheet is undefined!";
+        var instances = Array();
+        this.sheet.values.forEach(function (rowData, rowIndex) {
+            if (_this.ctor == null)
+                throw "undefined constructor";
+            if (!_this.sheet)
+                throw "Sheet is undefined!";
+            if (rowIndex == 0)
+                return;
+            var headers = _this.sheet.headers;
+            var data = {};
+            headers.forEach(function (header, index) {
+                data[header] = rowData[index];
+            });
+            var instance = new _this.ctor(data);
+            instances.push(instance);
+        });
+        return instances;
+    };
     return SheetObjectDictionary;
 }());
 /// <reference path="./SheetObject" />
-function f() {
-    var ss = new Spreadsheet();
-    var mouseSheet = new Sheet(ss, "mouse");
-    var mouseObjectDictionary = new SheetObjectDictionary(Mouse);
-    var mouseTranslator = new SheetObjectTranslator(mouseObjectDictionary, mouseSheet, Mouse);
-    return;
-}
-var Mouse = /** @class */ (function (_super) {
-    __extends(Mouse, _super);
-    function Mouse() {
-        var _this = _super !== null && _super.apply(this, arguments) || this;
-        _this.cageId = "";
-        _this.id = 0;
-        return _this;
-    }
-    return Mouse;
-}(SheetObject));
-var SheetObjectTranslator = /** @class */ (function () {
-    function SheetObjectTranslator(dictionary, sheet, objectCtor) {
-        this.dictionary = dictionary;
-        this.sheet = sheet;
-        this.objectCtor = objectCtor;
-    }
-    Object.defineProperty(SheetObjectTranslator.prototype, "objectPropertyNames", {
-        get: function () {
-            if (!this.dictionary)
-                throw 'Sheet is undefined!';
-            return Object.keys(this.dictionary);
-        },
-        enumerable: true,
-        configurable: true
-    });
-    return SheetObjectTranslator;
-}());
+//function f(): void {
+//let ss: Spreadsheet = new Spreadsheet();
+//let mouseSheet: Sheet = new Sheet(ss, "mouse");
+//let mouseObjectDictionary = new SheetObjectDictionary(Mouse);
+//let mouseTranslator = new SheetObjectTranslator(mouseObjectDictionary, mouseSheet, Mouse);
+//return;
+//}
+//class Mouse extends SheetObject {
+//cageId: string = "";
+//id: number = 0;
+//}
+//class SheetObjectTranslator<T extends SheetObjectConstructor> {
+//private sheet: Sheet | undefined;
+//private objectCtor: T | undefined;
+//private dictionary: SheetObjectDictionary<T> | undefined;
+//get objectPropertyNames(): string[] {
+//if(!this.dictionary) throw 'Sheet is undefined!';
+//return Object.keys(this.dictionary);
+//}
+//constructor(dictionary: SheetObjectDictionary<T>, sheet: Sheet, objectCtor: T) {
+//this.dictionary = dictionary;
+//this.sheet = sheet;
+//this.objectCtor = objectCtor;
+//}
+//translate(): SheetObjectInstance[] {
+//if(!this.sheet) throw 'Sheet is undefined!';
+//this.sheet.values.forEach((rowData: any[], index: number): void => {
+//if(index == 0) return;
+//if(!this.objectCtor) throw 'ctor is undefined!';
+//let curObject: SheetObjectInstance = new this.objectCtor();
+//this.objectPropertyNames.forEach((propertyName: string): void => {
+//if(!this.dictionary) throw 'Dictionary is undfined!';
+//if(!this.sheet) throw 'Sheet is undefined!';
+//let sheetHeader: string = this.dictionary[propertyName];
+//let columnNumber: number = this.sheet.headers.indexOf(sheetHeader);
+//let propertyValue: any = rowData[columnNumber];
+//curObject.
+//});
+//});
+//}
+//}
 /// <reference path="../node_modules/googleapis/build/src/apis/sheets/v4" />
 var Spreadsheet = /** @class */ (function () {
     /*
@@ -383,6 +415,7 @@ function runGasTests() {
     spreadsheetTest(tap);
     sheetTap(tap);
     sheetObjectTap(tap);
+    sheetObjectDictionaryTap(tap);
     var tp = tap.finish();
     return {
         log: Logger.getLog(),
@@ -405,20 +438,20 @@ function sheetTap(tap) {
 }
 function sheetObjectTap(tap) {
     var data = {
-        cageId: "KD1",
-        id: 1,
-        earId: 1,
-        background: null,
-        animalAcct: 3,
+        cage: "KD1",
+        ID: 1,
+        Ear: 1,
+        BackGround: null,
+        AP: 3,
         DOB: new Date("3/6/18"),
-        source: "KD #1",
-        sex: "M",
-        strains: "HF LC Td",
-        location: "ML 457",
-        studyNames: null,
-        notes: null,
+        Source: "KD #1",
+        Sex: "M",
+        "Project ID": "HF LC Td",
+        Location: "ML 457",
+        "Study Name": null,
+        Note: null,
         DOD: null,
-        breedingData: null,
+        Breeding: null,
         Cre1: "POS",
         Cre2: null,
         LF: null,
@@ -471,20 +504,20 @@ var MouseObject = /** @class */ (function (_super) {
         _this.genotypes = null;
         if (!data)
             return _this;
-        _this.cageId = data.cageId;
-        _this.id = data.id;
-        _this.earId = data.earId;
-        _this.background = data.background;
-        _this.animalAcct = data.animalAcct;
+        _this.cageId = data["cage"];
+        _this.id = data.ID;
+        _this.earId = data.Ear;
+        _this.background = data.BackGround;
+        _this.animalAcct = data.AP;
         _this.DOB = data.DOB;
-        _this.source = data.source;
-        _this.sex = data.sex;
-        _this.strains = _this.processStrains(data.strains);
-        _this.location = data.location;
-        _this.studyNames = data.studyNames;
-        _this.notes = data.notes;
-        _this.DOD = data.DOD;
-        _this.breedingDate = data.breedingDate;
+        _this.source = data.Source;
+        _this.sex = data.Sex;
+        _this.strains = _this.processStrains(data["Project ID"]);
+        _this.location = data.Location;
+        _this.studyNames = data["Study Name"];
+        _this.notes = data.Note;
+        _this.DOD = data.Sac;
+        _this.breedingDate = data.Breeding;
         _this.genotypes = _this.strains.reduce(function (curGenotype, curStrain) {
             var ogStrain = curStrain;
             if (curStrain.match(/C$/gi) != null)
@@ -507,6 +540,18 @@ var MouseObject = /** @class */ (function (_super) {
     };
     return MouseObject;
 }(SheetObject));
+function sheetObjectDictionaryTap(tap) {
+    var ss = new Spreadsheet();
+    var sheet = new Sheet(ss, "Sheet1");
+    var sod = new SheetObjectDictionary(MouseObject, sheet);
+    tap.test("Translation testing", function (t) {
+        var objs = sod.translate();
+        //Logger.log(objs[0]);
+        t.notEqual(objs.length, 0, "Object.length is non-zero");
+        t.equal(objs[0].id, "H2738", "First mouse object should equal H2738");
+    });
+    return;
+}
 function spreadsheetTest(tap) {
     tap.test("Spreadsheet constructor should give us the active spreadsheet", function (t) {
         var expected = "GSheetsTS Test Sheet";
