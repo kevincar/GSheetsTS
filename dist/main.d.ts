@@ -55,32 +55,3 @@ declare class Spreadsheet {
     constructor(spreadsheetId?: string | null);
     requestGASSpreadsheet(spreadsheetId: string): GoogleAppsScript.Spreadsheet.Spreadsheet;
 }
-declare function testValdiation(x: number, y: number): number;
-declare function testTest(tap: GasTap): void;
-declare function runGasTests(): any;
-declare function sheetTap(tap: GasTap): void;
-declare function sheetObjectTap(tap: GasTap): void;
-declare class MouseObject extends SheetObject {
-    cageId: string | null;
-    id: number | null;
-    earId: number | null;
-    background: string | null;
-    animalAcct: number | null;
-    DOB: Date | null;
-    source: string | null;
-    sex: string | null;
-    strains: string[] | null;
-    location: string | null;
-    studyNames: string[] | null;
-    notes: string | null;
-    DOD: Date | null;
-    breedingDate: Date | null;
-    genotypes: Genotype | null;
-    constructor(data: SheetObjectInterface | null);
-    private processStrains(strainsData);
-}
-interface Genotype {
-    [strain: string]: string;
-}
-declare function sheetObjectDictionaryTap(tap: GasTap): void;
-declare function spreadsheetTest(tap: GasTap): void;

@@ -16,7 +16,7 @@ var SCOPES = [
 var TOKEN_DIR = "../";
 var TOKEN_PATH = TOKEN_DIR + '/token.json';
 var SECRETS_PATH = "../client_secrets.json";
-var SOURCE_FILE = "../../dist/main.js";
+var SOURCE_FILE = "../../tests/dist/main.js";
 var TEST_FUNCTION = "runGasTests";
 console.log("reading secret file");
 fs.readFile(SECRETS_PATH, function (err, content) {

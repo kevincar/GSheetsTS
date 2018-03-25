@@ -18,7 +18,7 @@ let SCOPES: string[] = [
 let TOKEN_DIR: string = "../";
 let TOKEN_PATH: string = TOKEN_DIR + '/token.json';
 let SECRETS_PATH: string = "../client_secrets.json";
-let SOURCE_FILE: string = "../../dist/main.js"
+let SOURCE_FILE: string = "../../tests/dist/main.js"
 let TEST_FUNCTION: string = "runGasTests";
 
 console.log("reading secret file");
