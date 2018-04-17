@@ -1,9 +1,4 @@
 "use strict";
-function main() {
-    var ss = new Spreadsheet();
-    var sheet = new Sheet(ss, "Sheet1");
-    Logger.log(sheet.values);
-}
 /// <reference path="../node_modules/googleapis/build/src/apis/sheets/v4" />
 var Sheet = /** @class */ (function () {
     /*

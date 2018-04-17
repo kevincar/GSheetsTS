@@ -9,11 +9,6 @@ var __extends = (this && this.__extends) || (function () {
         d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
     };
 })();
-function main() {
-    var ss = new Spreadsheet();
-    var sheet = new Sheet(ss, "Sheet1");
-    Logger.log(sheet.values);
-}
 /// <reference path="../node_modules/googleapis/build/src/apis/sheets/v4" />
 var Sheet = /** @class */ (function () {
     /*

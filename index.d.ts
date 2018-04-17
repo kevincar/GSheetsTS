@@ -1,4 +1,3 @@
-declare function main(): any;
 declare class Sheet {
     private _parentSpreadsheet;
     private _GASSheet;
