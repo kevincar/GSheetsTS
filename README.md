@@ -21,18 +21,16 @@ if(typeof(SheetObject) == 'undefined') {
 ```
 
 # Quickstart
-
-#. Each spreadsheet should act as a list of objects
-
-Student Table
-Name | Age | Gender
---- | --- | ---
-Yan | 30 | M 
-Jordan | 25 | F
-Akos | 31 | M
-Natalia | 35 | F
-
-#. Create your class to model a record in the table
+ 
+ Name | Age | Gender
+ --- | --- | ---
+ Yan | 30 | M 
+ Jordan | 25 | F
+ Akos | 31 | M
+ Natalia | 35 | F
+ 
+1. Each spreadsheet should act as a list of objects Student Table
+1. Create your class to model a record in the table
 
 ```typescript
 class Student {
