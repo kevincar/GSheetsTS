@@ -19,3 +19,22 @@ if(typeof(SheetObject) == 'undefined') {
 	eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/kevincar/GSheetsTS/master/dist/main.js').getContentText());
 }
 ```
+
+# Quickstart
+
+#. Each spreadsheet should act as a list of objects
+
+Student Table
+| Name | Age | Gender |
+| Yan | 30 | M |
+| Jordan | 25 | F |
+| Akos | 31 | M |
+| Natalia | 35 | F |
+
+#. Create your class to model a record in the table
+
+```typescript
+class Student {
+	
+}
+```
