@@ -26,6 +26,7 @@ if(typeof(SheetObject) == 'undefined') {
 
 Student Table
 Name | Age | Gender
+--- | --- | ---
 Yan | 30 | M 
 Jordan | 25 | F
 Akos | 31 | M
