@@ -329,7 +329,7 @@ function main(authClient: googleAuth.OAuth2Client): void {
 				detail.scriptStackTraceElements.forEach((sste: any) => {
 					let objDetails: string = JSON.stringify(sste, null, 4);
 					console.log(objDetails);
-				});	
+				});
 			});
             return process.exit(1);
         }
