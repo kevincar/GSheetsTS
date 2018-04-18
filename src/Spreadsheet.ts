@@ -9,7 +9,7 @@ class Spreadsheet {
 	private _APISpreadsheet: Sheets.Spreadsheet | null = null;
 	private _spreadsheetId: string | null = null;
 	private _name: string | null = null;
-	// private _sheets: Sheet[] | null = null;
+	private _sheetNames: string[] | null = null;
 
 	/*
 	 * Accessors
@@ -54,6 +54,16 @@ class Spreadsheet {
 		this._name = this.GASSpreadsheet.getName();
 
 		return this._name;
+	}
+
+	get sheetNames(): string[] {
+		if(this._sheetNames != null) return this._sheetNames;
+
+		this._sheetNames = this.APISpreadsheet.sheets.map((sheet: Sheets.Sheet): string => {
+			return sheet.properties.title;
+		});
+
+		return this._sheetNames;
 	}
 
 	/*
