@@ -47,10 +47,12 @@ declare class Spreadsheet {
     private _APISpreadsheet;
     private _spreadsheetId;
     private _name;
+    private _sheetNames;
     private readonly GASSpreadsheet;
     private readonly APISpreadsheet;
     readonly spreadsheetId: string;
     readonly name: string;
+    readonly sheetNames: string[];
     constructor(spreadsheetId?: string | null);
     requestGASSpreadsheet(spreadsheetId: string): GoogleAppsScript.Spreadsheet.Spreadsheet;
 }

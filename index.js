@@ -20,6 +20,8 @@ var Sheet = /** @class */ (function () {
         this._dataValidations = null;
         this._parentSpreadsheet = parent;
         this._name = name;
+        if (parent.sheetNames.indexOf(name) == -1)
+            throw "Cannot find sheet with the name " + name;
     }
     Object.defineProperty(Sheet.prototype, "parentSpreadsheet", {
         /*
@@ -311,10 +313,10 @@ var Spreadsheet = /** @class */ (function () {
         this._APISpreadsheet = null;
         this._spreadsheetId = null;
         this._name = null;
+        this._sheetNames = null;
         this._spreadsheetId = spreadsheetId;
     }
     Object.defineProperty(Spreadsheet.prototype, "GASSpreadsheet", {
-        // private _sheets: Sheet[] | null = null;
         /*
          * Accessors
          */
@@ -361,6 +363,18 @@ var Spreadsheet = /** @class */ (function () {
                 return this._name;
             this._name = this.GASSpreadsheet.getName();
             return this._name;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Spreadsheet.prototype, "sheetNames", {
+        get: function () {
+            if (this._sheetNames != null)
+                return this._sheetNames;
+            this._sheetNames = this.APISpreadsheet.sheets.map(function (sheet) {
+                return sheet.properties.title;
+            });
+            return this._sheetNames;
         },
         enumerable: true,
         configurable: true
