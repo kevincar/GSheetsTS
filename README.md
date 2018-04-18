@@ -16,7 +16,7 @@ than as a two-dimensional array.
 
 ```typescript
 if(typeof(SheetObject) == 'undefined') {
-	eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/kevincar/GSheetsTS/master/dist/main.js').getContentText());
+	eval(UrlFetchApp.fetch('https://raw.githubusercontent.com/kevincar/GSheetsTS/master/index.js').getContentText());
 }
 ```
 
