@@ -14,4 +14,10 @@ function sheetTap(tap: GasTap):void {
 		t.notEqual([].length, testSheet.formulas.length, "formula length");
 		t.notEqual([].length, testSheet.formats.length, "format length");
 	});
+
+	tap.test("A Non-existing sheet should throw an appropriate error", (t:test): void => {
+		t.throws(() => {
+			new Sheet(spreadsheet, "NonExistantSheetName");
+		},"Non existant sheet throws error");
+	});
 }

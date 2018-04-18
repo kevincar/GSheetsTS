@@ -177,6 +177,7 @@ class Sheet {
 	constructor(parent: Spreadsheet, name: string) {
 		this._parentSpreadsheet = parent;
 		this._name = name;
+		if(parent.sheetNames.indexOf(name) == -1) throw `Cannot find sheet with the name ${name}`;
 	}
 
 	private extractValue(value: Sheets.ExtendedValue): any {
