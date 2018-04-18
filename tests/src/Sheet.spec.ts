@@ -20,4 +20,11 @@ function sheetTap(tap: GasTap):void {
 			new Sheet(spreadsheet, "NonExistantSheetName");
 		},"Non existant sheet throws error");
 	});
+
+	tap.test("Obtaining data with blank rows should not throw errors", (t: test): void => {
+		let sheet: Sheet = new Sheet(spreadsheet, "Sheet2");
+		t.notThrow(() => {
+			let values: any[][] = sheet.values;
+		}, "blank rows processed without error");
+	});
 }

@@ -92,8 +92,12 @@ var Sheet = /** @class */ (function () {
             var values = Array();
             this.APISheet.data.forEach(function (dataSegment) {
                 dataSegment.rowData.forEach(function (rowData, rowN) {
+                    var curRow = dataSegment.startRow ? dataSegment.startRow + rowN : rowN;
+                    if (rowData.values === undefined) {
+                        values[curRow] = new Array();
+                        return;
+                    }
                     rowData.values.forEach(function (cellData, columnN) {
-                        var curRow = dataSegment.startRow ? dataSegment.startRow + rowN : rowN;
                         var curColumn = dataSegment.startColumn ? dataSegment.startColumn + columnN : columnN;
                         if (values[curRow] == undefined)
                             values[curRow] = new Array();

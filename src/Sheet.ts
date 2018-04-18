@@ -73,8 +73,12 @@ class Sheet {
 
 		this.APISheet.data.forEach((dataSegment: Sheets.GridData): void => {
 			dataSegment.rowData.forEach((rowData: Sheets.RowData, rowN: number): void => {
+				let curRow: number = dataSegment.startRow?dataSegment.startRow + rowN:rowN;
+				if(rowData.values === undefined) {
+					values[curRow] = new Array();
+					return;
+				}
 				rowData.values.forEach((cellData: Sheets.CellData, columnN: number): void => {
-					let curRow: number = dataSegment.startRow?dataSegment.startRow + rowN:rowN;
 					let curColumn: number = dataSegment.startColumn?dataSegment.startColumn + columnN:columnN;
 					if(values[curRow] == undefined) values[curRow] = new Array();
 					values[curRow][curColumn] = this.extractValue(cellData.effectiveValue);
