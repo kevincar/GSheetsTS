@@ -1,7 +1,7 @@
 function sheetObjectDictionaryTap(tap: GasTap): void {
 
 	let ss: Spreadsheet = new Spreadsheet();
-	let sheet: Sheet = new Sheet(ss, "Sheet1");
+	let sheet: Sheet = new Sheet(ss, "Mice");
 	let sod = new SheetObjectDictionary(MouseObject, sheet);
 
 	tap.test("Translation testing", (t: test) => {

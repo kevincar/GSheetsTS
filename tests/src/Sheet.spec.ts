@@ -1,11 +1,11 @@
 function sheetTap(tap: GasTap):void {
 
 	let spreadsheet: Spreadsheet = new Spreadsheet();
-	let testSheet: Sheet = new Sheet(spreadsheet, "Sheet1");
+	let testSheet: Sheet = new Sheet(spreadsheet, "Mice");
 
 	tap.test("Sheet constructor should set the name", (t: test): void => {
 		let observed: string = testSheet.name;
-		let expected: string = "Sheet1";
+		let expected: string = "Mice";
 		t.equal(observed, expected, "name is set");
 	});
 
@@ -22,7 +22,7 @@ function sheetTap(tap: GasTap):void {
 	});
 
 	tap.test("Obtaining data with blank rows should not throw errors", (t: test): void => {
-		let sheet: Sheet = new Sheet(spreadsheet, "Sheet2");
+		let sheet: Sheet = new Sheet(spreadsheet, "People");
 		t.notThrow(() => {
 			let values: any[][] = sheet.values;
 		}, "blank rows processed without error");
