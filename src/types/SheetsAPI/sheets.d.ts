@@ -723,6 +723,7 @@ declare namespace Sheets {
         function get(spreadsheetId: string): Spreadsheet;
         function get(spreadsheetId: string, optionalArgs: Object): Spreadsheet;
 
+		// TODO: add update types from: https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/request#Request
         namespace Values {
             function get(spreadsheetId: string, range: string): ValueRange;
             function get(spreadsheetId: string, range: string, optionalArgs: Object): ValueRange;

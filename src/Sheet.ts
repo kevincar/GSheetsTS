@@ -193,4 +193,10 @@ class Sheet {
 		else if(value.stringValue) return value.stringValue;
 
 	}
+
+	write(): boolean {
+		
+
+		return true;
+	}
 }

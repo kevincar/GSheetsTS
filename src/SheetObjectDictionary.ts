@@ -31,4 +31,10 @@ class SheetObjectDictionary<T extends SheetObject>{
 
 		return instances;
 	} 
+
+	write(instances: T[]): boolean {
+
+
+		return true;
+	}
 }
