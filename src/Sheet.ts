@@ -195,8 +195,7 @@ class Sheet {
 	}
 
 	write(): boolean {
-		
-
+		this.GASSheet.getDataRange().setValues(this.values);
 		return true;
 	}
 }

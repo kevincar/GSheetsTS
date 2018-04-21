@@ -34,7 +34,10 @@ class SheetObjectDictionary<T extends SheetObject>{
 
 	write(instances: T[]): boolean {
 
+		let values: any[][] = [];
 
+		instances.forEach((obj: T): void => {
+		});
 		return true;
 	}
 }

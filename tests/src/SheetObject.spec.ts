@@ -93,6 +93,15 @@ class MouseObject extends SheetObject {
 		}, {});
 	}
 
+	destruct(): SheetObjectInterface {
+		// TODO: Objects are responsible for taking in data, then they need to be responsible for spitting it back out for writtin
+
+		let data: SheetObjectInterface = { };
+
+		return data;
+
+	}
+
 	private processStrains(strainsData: string): string[] {
 		let strains: string[] = strainsData.split(" ");
 		strains = strains.map((strain: string): string => {
