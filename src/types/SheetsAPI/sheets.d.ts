@@ -723,7 +723,8 @@ declare namespace Sheets {
         function get(spreadsheetId: string): Spreadsheet;
         function get(spreadsheetId: string, optionalArgs: Object): Spreadsheet;
 
-		// TODO: add update types from: https://developers.google.com/sheets/api/reference/rest/v4/spreadsheets/request#Request
+		function batchUpdate(resource: BatchUpdateSpreadsheetRequest, spreadsheetId: string): BatchUpdateSpreadsheetResponse;
+
         namespace Values {
             function get(spreadsheetId: string, range: string): ValueRange;
             function get(spreadsheetId: string, range: string, optionalArgs: Object): ValueRange;
@@ -843,5 +844,471 @@ declare namespace Sheets {
 		FORMATTED_VALUE,
 		UNFORMATTED_VALUE,
 		FORMULA
+	}
+
+	interface BatchUpdateSpreadsheetRequest {
+		requests: Request[],
+		includeSpreadsheetInResponse: boolean,
+		responseRanges: string[],
+		responseIncludeGridData: boolean
+	}
+
+	interface Request {
+		// Union field kind can be only one of the following:
+		"updateSpreadsheetProperties": UpdateSpreadsheetPropertiesRequest,
+		"updateSheetProperties": UpdateSheetPropertiesRequest,
+		"updateDimensionProperties": UpdateDimensionPropertiesRequest,
+		"updateNamedRange": UpdateNamedRangeRequest,
+		"repeatCell": RepeatCellRequest,
+		"addNamedRange": AddNamedRangeRequest,
+		"deleteNamedRange": DeleteNamedRangeRequest,
+		"addSheet": AddSheetRequest,
+		"deleteSheet": DeleteSheetRequest,
+		"autoFill": AutoFillRequest,
+		"cutPaste": CutPasteRequest,
+		"copyPaste": CopyPasteRequest,
+		"mergeCells": MergeCellsRequest,
+		"unmergeCells": UnmergeCellsRequest,
+		"updateBorders": UpdateBordersRequest,
+		"updateCells": UpdateCellsRequest,
+		"addFilterView": AddFilterViewRequest,
+		"appendCells": AppendCellsRequest,
+		"clearBasicFilter": ClearBasicFilterRequest,
+		"deleteDimension": DeleteDimensionRequest,
+		"deleteEmbeddedObject": DeleteEmbeddedObjectRequest,
+		"deleteFilterView": DeleteFilterViewRequest,
+		"duplicateFilterView": DuplicateFilterViewRequest,
+		"duplicateSheet": DuplicateSheetRequest,
+		"findReplace": FindReplaceRequest,
+		"insertDimension": InsertDimensionRequest,
+		"insertRange": InsertRangeRequest,
+		"moveDimension": MoveDimensionRequest,
+		"updateEmbeddedObjectPosition": UpdateEmbeddedObjectPositionRequest,
+		"pasteData": PasteDataRequest,
+		"textToColumns": TextToColumnsRequest,
+		"updateFilterView": UpdateFilterViewRequest,
+		"deleteRange": DeleteRangeRequest,
+		"appendDimension": AppendDimensionRequest,
+		"addConditionalFormatRule": AddConditionalFormatRuleRequest,
+		"updateConditionalFormatRule": UpdateConditionalFormatRuleRequest,
+		"deleteConditionalFormatRule": DeleteConditionalFormatRuleRequest,
+		"sortRange": SortRangeRequest,
+		"setDataValidation": SetDataValidationRequest,
+		"setBasicFilter": SetBasicFilterRequest,
+		"addProtectedRange": AddProtectedRangeRequest,
+		"updateProtectedRange": UpdateProtectedRangeRequest,
+		"deleteProtectedRange": DeleteProtectedRangeRequest,
+		"autoResizeDimensions": AutoResizeDimensionsRequest,
+		"addChart": AddChartRequest,
+		"updateChartSpec": UpdateChartSpecRequest,
+		"updateBanding": UpdateBandingRequest,
+		"addBanding": AddBandingRequest,
+		"deleteBanding": DeleteBandingRequest,
+		"createDeveloperMetadata": CreateDeveloperMetadataRequest,
+		"updateDeveloperMetadata": UpdateDeveloperMetadataRequest,
+		"deleteDeveloperMetadata": DeleteDeveloperMetadataRequest,
+		"randomizeRange": RandomizeRangeRequest
+	}
+	
+	interface UpdateSpreadsheetPropertiesRequest {
+		properties: SpreadsheetProperties,
+		fields: string
+	}
+
+	interface UpdateSheetPropertiesRequest {
+		properties: SheetProperties,
+		fields: string
+	}
+
+	interface UpdateDimensionPropertiesRequest {
+		range: DimensionRange,
+		properties: DimensionProperties,
+		fields: string
+	}
+
+	interface UpdateNamedRangeRequest {
+		namedRange: NamedRange,
+		fields: string
+	}
+
+	interface RepeatCellRequest {
+		range: GridRange,
+		cell: CellData,
+		fields: string
+	}
+
+	interface AddNamedRangeRequest {
+		namedRange: NamedRange
+	}
+
+	interface DeleteNamedRangeRequest {
+		namedRangeId: string
+	}
+
+	interface AddSheetRequest {
+		properties: SheetProperties
+	}
+
+	interface DeleteSheetRequest {
+		sheetId: number
+	}
+
+	interface AutoFillRequest {
+		useAlternateSeries: boolean,
+		range: GridRange,
+		sourceAndDestination: SourceAndDestination
+	}
+
+	interface SourceAndDestination {
+		source: GridRange,
+		dimension: Dimension,
+		fillLength: number
+	}
+
+	interface CutPasteRequest {
+		source: GridRange,
+		destination: GridCoordinate,
+		pasteType: PasteType
+	}
+
+	enum PasteType {
+		PASTE_NORMAL,
+		PASTE_VALUES,
+		PASTE_FORMAT,
+		PASTE_NO_BORDERS,
+		PASTE_FORMULA,
+		PASTE_DATA_VALIDATION,
+		PASTE_CONDITIONAL_FORMATTING
+	}
+
+	interface CopyPasteRequest {
+		source: GridRange,
+		destination: GridRange,
+		pasteType: PasteType,
+		pasteOrientation: PasteOrientation
+	}
+
+	enum PasteOrientation {
+		NORMAL,
+		TRANSPOSE
+	}
+
+	interface MergeCellsRequest {
+		range: GridRange,
+		mergeType: MergeType
+	}
+
+	enum MergeType {
+		MERGE_ALL,
+		MERGE_COLUMNS,
+		MERGE_ROWS
+	}
+
+	interface UnmergeCellsRequest {
+		range: GridRange
+	}
+
+	interface UpdateBordersRequest {
+		range: GridRange,
+		top: Border,
+		bottom: Border,
+		left: Border,
+		right: Border,
+		innerHorizontal: Border,
+		innerVertical: Border
+	}
+
+	interface UpdateCellsRequest {
+		rows: RowData[],
+		fields: string,
+		start?: GridCoordinate,
+		range?: GridRange
+	}
+
+	interface AddFilterViewRequest {
+		filter: FilterView
+	}
+
+	interface AppendCellsRequest {
+		sheetId: number,
+		rows: RowData[],
+		fields: string
+	}
+
+	interface ClearBasicFilterRequest {
+		sheetId: number
+	}
+
+	interface DeleteDimensionRequest {
+		range: DimensionRange
+	}
+
+	interface DeleteEmbeddedObjectRequest {
+		objectId: number
+	}
+
+	interface DeleteFilterViewRequest {
+		filterId: number
+	}
+
+	interface DuplicateFilterViewRequest {
+		filterId: number
+	}
+
+	interface DuplicateSheetRequest {
+		filterId: number
+	}
+
+	interface FindReplaceRequest {
+		find: string,
+		replacement: string,
+		matchCase: boolean,
+		matchEntireCell: boolean,
+		searchByRegex: boolean,
+		includeFormulas: boolean,
+
+		range?: GridRange,
+		sheetId?: number,
+		allSheets?: boolean
+	}
+
+	interface InsertDimensionRequest {
+		range: DimensionRange,
+		inheritFromBefore: boolean
+	}
+
+	interface InsertRangeRequest {
+		range: GridRange,
+		shiftDimension: Dimension
+	}
+
+	interface MoveDimensionRequest {
+		source: DimensionRange,
+		destinationIndex: number
+	}
+
+	interface UpdateEmbeddedObjectPositionRequest {
+		objectId: number,
+		newPosition: EmbeddedObjectPosition,
+		fields: string
+	}
+
+	interface PasteDataRequest {
+		coordinate: GridCoordinate,
+		date: string,
+		type: PasteType,
+		delimiter?: string,
+		html?: boolean
+	}
+
+	interface TextToColumnsRequest {
+		source: GridRange,
+		delimiter: string,
+		delimiterType: DelimiterType
+	}
+
+	enum DelimiterType {
+		DELIMITER_TYPE_UNSPECIFIED,
+		COMMA,
+		SEMICOLON,
+		PERIOD,
+		SPACE,
+		CUSTOM,
+		AUTODETECT
+	}
+
+	interface UpdateFilterViewRequest {
+		filter: FilterView,
+		fields: string
+	}
+
+	interface DeleteRangeRequest {
+		range: GridRange,
+		shiftDimension: Dimension
+	}
+
+	interface AppendDimensionRequest {
+		sheetId: number,
+		dimension: Dimension,
+		length: number
+	}
+
+	interface AddConditionalFormatRuleRequest {
+		rule: ConditionalFormatRule,
+		index: number
+	}
+
+	interface UpdateConditionalFormatRuleRequest {
+		index: number,
+		sheetId: number,
+		rule?: ConditionalFormatRule,
+		newIndex?: number
+	}
+
+	interface DeleteConditionalFormatRuleRequest {
+		index: number,
+		sheetId: number
+	}
+
+	interface SortRangeRequest {
+		range: GridRange,
+		sortSpecs: SortSpec[]
+	}
+
+	interface SetDataValidationRequest {
+		range: GridRange,
+		rule: DataValidationRule
+	}
+
+	interface SetBasicFilterRequest {
+		filter: BasicFilter
+	}
+
+	interface AddProtectedRangeRequest {
+		protectedRange: ProtectedRange
+	}
+
+	interface UpdateProtectedRangeRequest {
+		protectedRange: ProtectedRange,
+		fields: string
+	}
+
+	interface DeleteProtectedRangeRequest {
+		protectedRangeId: number
+	}
+
+	interface AutoResizeDimensionsRequest {
+		dimensions: DimensionRange
+	}
+
+	interface AddChartRequest {
+		chart: EmbeddedChart
+	}
+
+	interface UpdateChartSpecRequest {
+		chartId: number,
+		spec: ChartSpec
+	}
+
+	interface UpdateBandingRequest {
+		bandedRange: BandedRange,
+		fields: string
+	}
+
+	interface AddBandingRequest {
+		bandedRange: BandedRange
+	}
+
+	interface DeleteBandingRequest {
+		bandedRangeId: number
+	}
+
+	interface CreateDeveloperMetadataRequest {
+		developerMetadata: DeveloperMetadata
+	}
+
+	interface UpdateDeveloperMetadataRequest {
+		dataFilters: DataFilter[],
+		developerMetadata: DeveloperMetadata,
+		fields: string
+	}
+
+	interface DeleteDeveloperMetadataRequest {
+		dataFilter: DataFilter
+	}
+
+	interface RandomizeRangeRequest {
+		range: GridRange
+	}
+
+	interface BatchUpdateSpreadsheetResponse {
+		spreadsheetId: string,
+		replied: Response[],
+		updatedSpreadsheet: Spreadsheet
+	}
+
+	interface Response {
+		addNamedRange?: AddNamedRangeRequest,
+		addSheet?: AddSheetResponse,
+		addFilterView?: AddFilterViewResponse,
+		duplicateFilterView?: DuplicateFilterViewResponse,
+		duplicateSheet?: DuplicateSheetResponse,
+		findReplace?: FindReplaceResponse,
+		updateEmbeddedObjectPosition?: UpdateEmbeddedObjectPositionResponse,
+		updateConditionalFormatRule?: UpdateConditionalFormatRuleResponse,
+		deleteConditionalFormatRule?: DeleteConditionalFormatRuleResponse,
+		addProtectedRange?: AddProtectedRangeResponse,
+		addChart?: AddChartResponse,
+		addBanding?: AddBandingResponse,
+		createDeveloperMetadata?: CreateDeveloperMetadataResponse,
+		updateDeveloperMetadata?: UpdateDeveloperMetadataResponse,
+		deleteDeveloperMetadata?: DeleteDeveloperMetadataResponse
+	}
+
+	interface AddNamedRangeResponse {
+		namedRange: NamedRange
+	}
+
+	interface AddSheetResponse {
+		properties: SheetProperties
+	}
+
+	interface AddFilterViewResponse {
+		filter: FilterView
+	}
+
+	interface DuplicateFilterViewResponse {
+		filter: FilterView
+	}
+
+	interface DuplicateSheetResponse {
+		properties: SheetProperties
+	}
+
+	interface FindReplaceResponse {
+		valuesChagned: number,
+		formulasChanged: number
+		rowsChanged: number,
+		sheetsChanged: number,
+		occurrencesChanged: number
+	}
+
+	interface UpdateEmbeddedObjectPositionResponse {
+		position: EmbeddedObjectPosition
+	}
+
+	interface UpdateConditionalFormatRuleResponse {
+		newRule: ConditionalFormatRule,
+		newIndex: number,
+		oldRule?: ConditionalFormatRule,
+		oldIndex?: number
+	}
+
+	interface DeleteConditionalFormatRuleResponse {
+		rule: ConditionalFormatRule
+	}
+
+	interface AddProtectedRangeResponse {
+		protectedRange: ProtectedRange
+	}
+
+	interface AddChartResponse {
+		chart: EmbeddedChart
+	}
+
+	interface AddBandingResponse {
+		bandedRange: BandedRange
+	}
+
+	interface CreateDeveloperMetadataResponse {
+		developerMetadata: DeveloperMetadata
+	}
+
+	interface UpdateDeveloperMetadataResponse {
+		developerMetadata: DeveloperMetadata
+	}
+
+	interface DeleteDeveloperMetadataResponse {
+		deletedDeveloperMetadata: DeveloperMetadata
 	}
 }
