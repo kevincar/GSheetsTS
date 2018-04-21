@@ -13,8 +13,10 @@ function sheetObjectTap(tap: GasTap): void {
 		Location: "ML 457",
 		"Study Name": null,
 		Note: null,
-		DOD: null,
+		Sac: null,
 		Breeding: null,
+		Request: null,
+		"Genotyping Files": null,
 		Cre1: "POS",
 		Cre2: null,
 		LF: null,
@@ -44,6 +46,12 @@ function sheetObjectTap(tap: GasTap): void {
 		t.equal(mouse.genotypes.LC, "POS", "LC genotype");
 	});
 
+	tap.test("Destructor should work", (t: test): void => {
+		let destructed = mouse.destruct();
+
+		t.deepEqual(destructed, data, "Desructed mouse data for write");
+	});
+
 }
 
 class MouseObject extends SheetObject {
@@ -59,11 +67,14 @@ class MouseObject extends SheetObject {
 	source: string | null = null;
 	sex: string | null = null;
 	strains: string[] | null = null;
+	private originalStrains: string[] | null = null;
 	location: string | null = null;
 	studyNames: string[] | null = null;
 	notes: string | null = null;
 	DOD: Date |  null = null;
 	breedingDate: Date | null = null;
+	request: string | null = null;
+	files: string | null = null;
 	genotypes: Genotype | null = null;
 
 	constructor(data: SheetObjectInterface | null) {
@@ -79,11 +90,14 @@ class MouseObject extends SheetObject {
 		this.source = data.Source;
 		this.sex = data.Sex;
 		this.strains = this.processStrains(data["Project ID"]);
+		this.originalStrains = data["Project ID"];
 		this.location = data.Location;
 		this.studyNames = data["Study Name"];
 		this.notes = data.Note;
 		this.DOD = data.Sac;
 		this.breedingDate = data.Breeding;
+		this.request = data.Request;
+		this.files = data["Genotyping Files"];
 		
 		this.genotypes = this.strains.reduce((curGenotype: Genotype, curStrain: string) => {
 			let ogStrain: string = curStrain;
@@ -96,7 +110,43 @@ class MouseObject extends SheetObject {
 	destruct(): SheetObjectInterface {
 		// TODO: Objects are responsible for taking in data, then they need to be responsible for spitting it back out for writtin
 
-		let data: SheetObjectInterface = { };
+		if(!this.genotypes) throw "Genotypes was not set appropriately";
+
+		Logger.log(this.genotypes);
+
+		let data: SheetObjectInterface = {
+			cage: this.cageId,
+			ID: this.id,
+			Ear: this.earId,
+			BackGround: this.background,
+			AP: this.animalAcct,
+			DOB: this.DOB,
+			Source: this.source,
+			Sex: this.sex,
+			"Project ID": this.originalStrains,
+			Location: this.location,
+			"Study Name": this.studyNames,
+			Note: this.notes,
+			Sac: this.DOD,
+			Breeding: this.breedingDate,
+			Request: this.request,
+			"Genotyping Files": this.files,
+			Cre1: this.genotypes["LC"] == undefined ? null : this.genotypes["LC"],
+			Cre2: this.genotypes["Cre2"] == undefined ? null : this.genotypes["Cre2"],
+			LF: this.genotypes["LF"] == undefined ? null : this.genotypes["LF"],
+			MT: this.genotypes["MT"] == undefined ? null : this.genotypes["MT"],
+			Td: this.genotypes["Td"] == undefined ? null : this.genotypes["Td"],
+			HF: this.genotypes["HF"] == undefined ? null : this.genotypes["HF"],
+			LT: this.genotypes["LT"] == undefined ? null : this.genotypes["LT"],
+			MG: this.genotypes["MG"] == undefined ? null : this.genotypes["MG"],
+			HKi: this.genotypes["HKi"] == undefined ? null : this.genotypes["HKi"],
+			EKo: this.genotypes["EKo"] == undefined ? null : this.genotypes["EKo"],
+			EF: this.genotypes["EF"] == undefined ? null : this.genotypes["EF"],
+			S4Ki: this.genotypes["S4Ki"] == undefined ? null : this.genotypes["S4Ki"],
+			EraT: this.genotypes["EraT"] == undefined ? null : this.genotypes["EraT"],
+			EOx: this.genotypes["EOx"] == undefined ? null : this.genotypes["EOx"],
+			AtCe: this.genotypes["AtCe"] == undefined ? null : this.genotypes["AtCe"]
+		};
 
 		return data;
 
