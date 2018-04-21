@@ -46,10 +46,10 @@ function sheetObjectTap(tap: GasTap): void {
 		t.equal(mouse.genotypes.LC, "POS", "LC genotype");
 	});
 
-	tap.test("Destructor should work", (t: test): void => {
-		let destructed = mouse.destruct();
+	tap.test("getData should work", (t: test): void => {
+		let destructed = mouse.getData();
 
-		t.deepEqual(destructed, data, "Desructed mouse data for write");
+		t.deepEqual(destructed, data, "getData mouse data for write");
 	});
 
 }
@@ -107,7 +107,7 @@ class MouseObject extends SheetObject {
 		}, {});
 	}
 
-	destruct(): SheetObjectInterface {
+	getData(): SheetObjectInterface {
 		// TODO: Objects are responsible for taking in data, then they need to be responsible for spitting it back out for writtin
 
 		if(!this.genotypes) throw "Genotypes was not set appropriately";
