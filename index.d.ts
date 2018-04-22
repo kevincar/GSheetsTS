@@ -14,7 +14,7 @@ declare class Sheet {
     private readonly APISheet;
     readonly sheetId: number;
     readonly name: string;
-    readonly values: any[][];
+    values: any[][];
     readonly formulas: string[][];
     readonly formats: Sheets.CellFormat[][];
     readonly conditionalFormatRules: Sheets.ConditionalFormatRule[];
@@ -24,6 +24,7 @@ declare class Sheet {
     readonly nColumns: number;
     constructor(parent: Spreadsheet, name: string);
     private extractValue(value);
+    write(): boolean;
 }
 interface SheetObjectInterface {
     [property: string]: any;
@@ -34,6 +35,7 @@ interface SheetObjectConstructor<T extends SheetObject> {
     new (data: SheetObjectInterface | null): T;
 }
 declare abstract class SheetObject implements SheetObjectInstance {
+    getData(): SheetObjectInterface;
 }
 declare class SheetObjectDictionary<T extends SheetObject> {
     ctor: SheetObjectConstructor<T> | null;
@@ -41,6 +43,7 @@ declare class SheetObjectDictionary<T extends SheetObject> {
     constructor(ctor: SheetObjectConstructor<T>, sheet: Sheet);
     [property: string]: any;
     translate(): T[];
+    write(instances: T[]): boolean;
 }
 declare class Spreadsheet {
     private _GASSpreadsheet;

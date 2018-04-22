@@ -34,10 +34,23 @@ class SheetObjectDictionary<T extends SheetObject>{
 
 	write(instances: T[]): boolean {
 
+		if(!this.sheet) throw "cannot write to empty sheet";
 		let values: any[][] = [];
 
 		instances.forEach((obj: T): void => {
+			let data: SheetObjectInterface = obj.getData();
+			let dataValues: any[] = Object.keys(data).reduce((result: any[], curKey: string): any => {
+				let curValue: any = data[curKey];
+				if(curValue == null || curValue == undefined) curValue = "";
+				result.push(curValue);
+				return result;
+			}, []);
+			values.push(dataValues);
 		});
+
+		this.sheet.values = values;
+		this.sheet.write();
+
 		return true;
 	}
 }

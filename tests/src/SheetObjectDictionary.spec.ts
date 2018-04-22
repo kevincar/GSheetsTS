@@ -13,6 +13,26 @@ function sheetObjectDictionaryTap(tap: GasTap): void {
 		t.equal(objs[0].id, "H2738", "First mouse object should equal H2738");
 	});
 
+	tap.test("Write testing", (t: test): void => {
+		let writeSheet: Sheet = new Sheet(ss, "WriteTest");
+		let writeMiceDict: SheetObjectDictionary<MouseObject> = new SheetObjectDictionary(MouseObject, writeSheet);
+		let objs: MouseObject[] = writeMiceDict.translate();
+		let originalSize: number = 7;
+
+		// Duplicate last row. But if length is > 10, set back to original size
+		let nMice: number = objs.length;
+		if(nMice < 10) {
+			let lastMouse: MouseObject = objs[nMice-1];
+			objs.push(lastMouse);
+		}
+		else {
+			objs = objs.slice(0, originalSize);
+		}
+		t.notThrow((): void => {
+			writeMiceDict.write(objs);
+		}, "writing");
+	});
+
 	return;
 }
 

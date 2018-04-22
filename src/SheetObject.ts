@@ -9,4 +9,8 @@ interface SheetObjectConstructor<T extends SheetObject> {
 	new (data: SheetObjectInterface | null): T;
 }
 
-abstract class SheetObject implements SheetObjectInstance{}
+abstract class SheetObject implements SheetObjectInstance {
+	getData(): SheetObjectInterface {
+		return new Array();
+	}
+}

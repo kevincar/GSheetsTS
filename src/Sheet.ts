@@ -91,6 +91,14 @@ class Sheet {
 		return this._values;
 	}
 
+	set values(val: any[][]) {
+		if(!this._values) this.values;
+		val.forEach((rowData: any[], index: number):void => {
+			if(!this._values) throw "Sheet object is attempting to set values and values failed to set";
+			this._values[index+1] = rowData;
+		});
+	}
+
 	get formulas(): string[][] {
 		if(this._formulas != null) return this._formulas;
 
@@ -195,7 +203,14 @@ class Sheet {
 	}
 
 	write(): boolean {
-		this.GASSheet.getDataRange().setValues(this.values);
+		let nRows: number = this.values.length;
+		let nColumns: number = this.values[0].length;
+
+		Logger.log(`Height: ${this.values.length}`);
+		Logger.log(`Width: ${this.values[1].length}`);
+
+		this.GASSheet.getRange(1, 1, nRows, nColumns).setValues(this.values);
+
 		return true;
 	}
 }

@@ -9,6 +9,7 @@ function sheetObjectTap(tap: GasTap): void {
 		DOB: new Date("3/6/18"),
 		Source: "KD #1",
 		Sex: "M",
+		Age: 84,
 		"Project ID": "HF LC Td",
 		Location: "ML 457",
 		"Study Name": null,
@@ -66,6 +67,7 @@ class MouseObject extends SheetObject {
 	DOB: Date | null = null;
 	source: string | null = null;
 	sex: string | null = null;
+	age: number | null = null;
 	strains: string[] | null = null;
 	private originalStrains: string[] | null = null;
 	location: string | null = null;
@@ -89,6 +91,7 @@ class MouseObject extends SheetObject {
 		this.DOB = data.DOB;
 		this.source = data.Source;
 		this.sex = data.Sex;
+		this.age = data.Age;
 		this.strains = this.processStrains(data["Project ID"]);
 		this.originalStrains = data["Project ID"];
 		this.location = data.Location;
@@ -123,6 +126,7 @@ class MouseObject extends SheetObject {
 			DOB: this.DOB,
 			Source: this.source,
 			Sex: this.sex,
+			Age: this.age,
 			"Project ID": this.originalStrains,
 			Location: this.location,
 			"Study Name": this.studyNames,
