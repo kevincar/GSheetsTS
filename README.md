@@ -1,4 +1,5 @@
 [![Build Status](https://travis-ci.org/kevincar/GSheetsTS.svg?branch=master)](https://travis-ci.org/kevincar/GSheetsTS)
+[![npm version](https://badge.fury.io/js/gsheetsts.svg)](https://badge.fury.io/js/gsheetsts)
 
 # GSheetsTS
 
