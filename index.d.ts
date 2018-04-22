@@ -25,6 +25,7 @@ declare class Sheet {
     constructor(parent: Spreadsheet, name: string);
     private extractValue(value);
     write(): boolean;
+    private clear();
 }
 interface SheetObjectInterface {
     [property: string]: any;
@@ -36,6 +37,7 @@ interface SheetObjectConstructor<T extends SheetObject> {
 }
 declare abstract class SheetObject implements SheetObjectInstance {
     getData(): SheetObjectInterface;
+    validate(data: SheetObjectInterface): boolean;
 }
 declare class SheetObjectDictionary<T extends SheetObject> {
     ctor: SheetObjectConstructor<T> | null;

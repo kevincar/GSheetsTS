@@ -6,7 +6,6 @@ function sheetObjectDictionaryTap(tap: GasTap): void {
 
 	tap.test("Translation testing", (t: test) => {
 		let objs: MouseObject[] = sod.translate();
-		//Logger.log(objs[0]);
 
 		t.notEqual(objs.length, 0, "Object.length is non-zero");
 
@@ -26,7 +25,8 @@ function sheetObjectDictionaryTap(tap: GasTap): void {
 			objs.push(lastMouse);
 		}
 		else {
-			objs = objs.slice(0, originalSize);
+			objs.splice(originalSize, objs.length-originalSize);
+			Logger.log(objs.length);
 		}
 		t.notThrow((): void => {
 			writeMiceDict.write(objs);

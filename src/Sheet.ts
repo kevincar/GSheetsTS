@@ -93,6 +93,8 @@ class Sheet {
 
 	set values(val: any[][]) {
 		if(!this._values) this.values;
+		if(!this._values) throw "Sheet Object is attempting to set values and values failed to set";
+		this._values.splice(1, this._values.length-1);
 		val.forEach((rowData: any[], index: number):void => {
 			if(!this._values) throw "Sheet object is attempting to set values and values failed to set";
 			this._values[index+1] = rowData;
@@ -209,8 +211,16 @@ class Sheet {
 		Logger.log(`Height: ${this.values.length}`);
 		Logger.log(`Width: ${this.values[1].length}`);
 
+		this.clear();
 		this.GASSheet.getRange(1, 1, nRows, nColumns).setValues(this.values);
 
+		return true;
+	}
+
+	private clear(): boolean {
+
+		this.GASSheet.getRange(1, 1, this.nRows, this.nColumns).clearContent();
+		
 		return true;
 	}
 }

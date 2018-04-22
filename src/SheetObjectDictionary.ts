@@ -26,6 +26,7 @@ class SheetObjectDictionary<T extends SheetObject>{
 			});
 
 			let instance: T = new this.ctor(data);
+			if(!instance.validate(data)) return;
 			instances.push(instance);
 		}); 
 

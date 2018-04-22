@@ -112,6 +112,9 @@ var Sheet = /** @class */ (function () {
             var _this = this;
             if (!this._values)
                 this.values;
+            if (!this._values)
+                throw "Sheet Object is attempting to set values and values failed to set";
+            this._values.splice(1, this._values.length - 1);
             val.forEach(function (rowData, index) {
                 if (!_this._values)
                     throw "Sheet object is attempting to set values and values failed to set";
@@ -238,7 +241,12 @@ var Sheet = /** @class */ (function () {
         var nColumns = this.values[0].length;
         Logger.log("Height: " + this.values.length);
         Logger.log("Width: " + this.values[1].length);
+        this.clear();
         this.GASSheet.getRange(1, 1, nRows, nColumns).setValues(this.values);
+        return true;
+    };
+    Sheet.prototype.clear = function () {
+        this.GASSheet.getRange(1, 1, this.nRows, this.nColumns).clearContent();
         return true;
     };
     return Sheet;
@@ -248,6 +256,14 @@ var SheetObject = /** @class */ (function () {
     }
     SheetObject.prototype.getData = function () {
         return new Array();
+    };
+    SheetObject.prototype.validate = function (data) {
+        var allValuesBad = Object.keys(data).reduce(function (result, curKey) {
+            var value = data[curKey];
+            var isValueBad = (value == undefined) || (value == null);
+            return result && isValueBad;
+        }, true);
+        return !allValuesBad;
     };
     return SheetObject;
 }());
@@ -276,6 +292,8 @@ var SheetObjectDictionary = /** @class */ (function () {
                 data[header] = rowData[index];
             });
             var instance = new _this.ctor(data);
+            if (!instance.validate(data))
+                return;
             instances.push(instance);
         });
         return instances;

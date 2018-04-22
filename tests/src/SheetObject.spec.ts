@@ -83,6 +83,10 @@ class MouseObject extends SheetObject {
 		super();
 		if(!data) return;
 
+		if(!this.validate(data)) return;
+
+		Logger.log(`Project ID: ${data["Project ID"]}`);
+
 		this.cageId = data["cage"];
 		this.id = data.ID;
 		this.earId = data.Ear;
@@ -110,12 +114,15 @@ class MouseObject extends SheetObject {
 		}, {});
 	}
 
+	//validate(data: SheetObjectInterface): boolean {
+		//if(data["cage"] == null || data["cage"] == undefined) return false;	
+		//return true;
+	//}
+
 	getData(): SheetObjectInterface {
 		// TODO: Objects are responsible for taking in data, then they need to be responsible for spitting it back out for writtin
 
 		if(!this.genotypes) throw "Genotypes was not set appropriately";
-
-		Logger.log(this.genotypes);
 
 		let data: SheetObjectInterface = {
 			cage: this.cageId,
