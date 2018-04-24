@@ -225,22 +225,20 @@ var Sheet = /** @class */ (function () {
     Sheet.prototype.extractValue = function (value) {
         if (value == undefined)
             return undefined;
-        else if (value.boolValue)
+        else if (value.boolValue != undefined)
             return value.boolValue;
-        else if (value.errorValue)
+        else if (value.errorValue != undefined)
             return value.errorValue;
-        else if (value.formulaValue)
+        else if (value.formulaValue != undefined)
             return value.formulaValue;
-        else if (value.numberValue)
+        else if (value.numberValue != undefined)
             return value.numberValue;
-        else if (value.stringValue)
+        else if (value.stringValue != undefined)
             return value.stringValue;
     };
     Sheet.prototype.write = function () {
         var nRows = this.values.length;
         var nColumns = this.values[0].length;
-        Logger.log("Height: " + this.values.length);
-        Logger.log("Width: " + this.values[1].length);
         this.clear();
         this.GASSheet.getRange(1, 1, nRows, nColumns).setValues(this.values);
         return true;

@@ -196,20 +196,17 @@ class Sheet {
 
 	private extractValue(value: Sheets.ExtendedValue): any {
 		if(value == undefined) return undefined;
-		else if(value.boolValue) return value.boolValue;
-		else if(value.errorValue) return value.errorValue;
-		else if(value.formulaValue) return value.formulaValue;
-		else if(value.numberValue) return value.numberValue;
-		else if(value.stringValue) return value.stringValue;
+		else if(value.boolValue != undefined) return value.boolValue;
+		else if(value.errorValue != undefined) return value.errorValue;
+		else if(value.formulaValue != undefined) return value.formulaValue;
+		else if(value.numberValue != undefined) return value.numberValue;
+		else if(value.stringValue != undefined) return value.stringValue;
 
 	}
 
 	write(): boolean {
 		let nRows: number = this.values.length;
 		let nColumns: number = this.values[0].length;
-
-		Logger.log(`Height: ${this.values.length}`);
-		Logger.log(`Width: ${this.values[1].length}`);
 
 		this.clear();
 		this.GASSheet.getRange(1, 1, nRows, nColumns).setValues(this.values);

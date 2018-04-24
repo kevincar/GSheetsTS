@@ -1,6 +1,6 @@
 {
   "name": "gsheetsts",
-  "version": "0.3.0",
+  "version": "0.3.1",
   "description": "Google Apps Script and SheetsAPIv4 wrappers in TypeScript",
   "main": "index.js",
   "scripts": {
@@ -24,13 +24,13 @@
   },
   "homepage": "https://github.com/kevincar/GSheetsTS#readme",
   "devDependencies": {
-    "@types/async": "^2.0.47",
+    "@types/async": "^2.0.49",
     "@types/google-apps-script": "0.0.18",
-    "@types/node": "^9.4.6",
+    "@types/node": "^9.6.6",
     "async": "^2.6.0",
     "googleapis": "^26.0.1",
-    "tsgast": "^1.0.6",
-    "typescript": "^2.7.2"
+    "tsgast": "^1.0.71",
+    "typescript": "^2.8.3"
   },
   "dependencies": {
     "npm": "^5.8.0"

@@ -85,8 +85,6 @@ class MouseObject extends SheetObject {
 
 		if(!this.validate(data)) return;
 
-		Logger.log(`Project ID: ${data["Project ID"]}`);
-
 		this.cageId = data["cage"];
 		this.id = data.ID;
 		this.earId = data.Ear;
