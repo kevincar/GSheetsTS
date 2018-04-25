@@ -38,6 +38,8 @@ class SheetObjectDictionary<T extends SheetObject>{
 		if(!this.sheet) throw "cannot write to empty sheet";
 		let values: any[][] = [];
 
+		values[0] = this.sheet.headers;
+
 		instances.forEach((obj: T): void => {
 			let data: SheetObjectInterface = obj.getData();
 			let dataValues: any[] = Object.keys(data).reduce((result: any[], curKey: string): any => {

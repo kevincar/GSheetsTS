@@ -109,17 +109,11 @@ var Sheet = /** @class */ (function () {
             return this._values;
         },
         set: function (val) {
-            var _this = this;
             if (!this._values)
                 this.values;
             if (!this._values)
                 throw "Sheet Object is attempting to set values and values failed to set";
-            this._values.splice(1, this._values.length - 1);
-            val.forEach(function (rowData, index) {
-                if (!_this._values)
-                    throw "Sheet object is attempting to set values and values failed to set";
-                _this._values[index + 1] = rowData;
-            });
+            this._values = val;
         },
         enumerable: true,
         configurable: true
@@ -300,6 +294,7 @@ var SheetObjectDictionary = /** @class */ (function () {
         if (!this.sheet)
             throw "cannot write to empty sheet";
         var values = [];
+        values[0] = this.sheet.headers;
         instances.forEach(function (obj) {
             var data = obj.getData();
             var dataValues = Object.keys(data).reduce(function (result, curKey) {

@@ -26,7 +26,6 @@ function sheetObjectDictionaryTap(tap: GasTap): void {
 		}
 		else {
 			objs.splice(originalSize, objs.length-originalSize);
-			Logger.log(objs.length);
 		}
 		t.notThrow((): void => {
 			writeMiceDict.write(objs);
