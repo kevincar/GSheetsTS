@@ -10,7 +10,7 @@ interface SheetObjectConstructor<T extends SheetObject> {
 }
 
 abstract class SheetObject implements SheetObjectInstance {
-	static gDateConversion: number = 2209143600000;
+	private static gDateConversion: number[] = [-2209143600000, -2209140000000];
 	getData(): SheetObjectInterface {
 		return new Array();
 	}
@@ -37,15 +37,30 @@ abstract class SheetObject implements SheetObjectInstance {
 
 		let gTime: number = dateValue * 24 * 3600 * 1000;
 		let gDate: Date = new Date(gTime);
-		let convertedTime: number = gDate.getTime() - this.gDateConversion;
+		let convertedTime: number = gDate.getTime() + this.getConvNum(gDate);
 		return new Date(convertedTime);
 	}
 
 	static convertToGDate(date: Date | null): number | null {
 		if(date == null) return date;
 		let convertedTime: number = date.getTime();
-		let gTime: number = convertedTime + this.gDateConversion;
+		let gTime: number = convertedTime - this.getConvNum(date);
 		let dateValue: number = gTime / (24 * 3600 * 1000);
 		return dateValue;
+	}
+
+	private static getStdTimezoneOffset(date: Date): number {
+		let jan = new Date(date.getFullYear(), 0, 1);
+		let jul = new Date(date.getFullYear(), 6, 1);
+		return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
+	}
+
+	private static isDst(date: Date): boolean {
+		return date.getTimezoneOffset() < SheetObject.getStdTimezoneOffset(date);
+	}
+
+	private static getConvNum(date: Date): number {
+		let convIndex: number = SheetObject.isDst(date) ? 0 : 1;
+		return SheetObject.gDateConversion[convIndex];
 	}
 }

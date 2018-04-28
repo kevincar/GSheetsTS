@@ -11,5 +11,4 @@ function testTest(tap: GasTap): void {
 		let observed: number = testValdiation(a, b);
 		t.equal(observed, expected, 'test validation passed');
 	});
-
 }

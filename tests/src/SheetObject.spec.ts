@@ -54,18 +54,25 @@ function sheetObjectTap(tap: GasTap): void {
 	});
 
 	tap.test("convertFromGDate", (t: test): void => {
-		let expected: Date = new Date("7/14/2016");
-		
-		let spreadsheet: Spreadsheet = new Spreadsheet();
-		let mouseSheet: Sheet = new Sheet(spreadsheet, "Mice");
-		let sheetMouseDictionary: SheetObjectDictionary<MouseObject> = new SheetObjectDictionary(MouseObject, mouseSheet);
-		let mice: MouseObject[] = sheetMouseDictionary.translate();
-		let firstMouse: MouseObject = mice[0];
-		let observedDate: Date | null = firstMouse.DOB;
+		let date1String: string = "7/14/2016";
+		let date1gNumber: number = 42565;
 
-		t.notEqual(observedDate, null, "Date must not be null");
-		if(observedDate == null) return;
-		t.equal(observedDate.getTime(), expected.getTime(), "Dates must match");
+		let date1expected: Date = new Date(date1String);
+		let date1observed: Date | null = SheetObject.convertFromGDate(date1gNumber);
+
+		t.notEqual(date1observed, null, "date should not be null.");
+		if(date1observed == null) return;
+		t.equal(date1observed.getTime(), date1expected.getTime(), "time should be equal");
+
+		let date2String: string = "12/19/1990";
+		let date2gNumber: number = 33226;
+
+		let date2expected: Date = new Date(date2String);
+		let date2observed: Date | null = SheetObject.convertFromGDate(date2gNumber);
+
+		t.notEqual(date2observed, null, "date should not be null");
+		if(date2observed == null) return;
+		t.equal(date2observed.getTime(), date2expected.getTime(), "time should match");
 	});
 
 }
