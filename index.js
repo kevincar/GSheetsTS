@@ -241,6 +241,10 @@ var Sheet = /** @class */ (function () {
         this.GASSheet.getRange(1, 1, this.nRows, this.nColumns).clearContent();
         return true;
     };
+    Sheet.prototype.sort = function (column, ascending) {
+        if (ascending === void 0) { ascending = false; }
+        this.GASSheet.sort(column, ascending);
+    };
     return Sheet;
 }());
 var SheetObject = /** @class */ (function () {

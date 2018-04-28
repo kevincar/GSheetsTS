@@ -26,6 +26,7 @@ declare class Sheet {
     private extractValue(value);
     write(): boolean;
     private clear();
+    sort(column: number, ascending?: boolean): void;
 }
 interface SheetObjectInterface {
     [property: string]: any;
