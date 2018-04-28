@@ -6,7 +6,7 @@ function sheetObjectTap(tap: GasTap): void {
 		Ear: 1,
 		BackGround: null,
 		AP: 3,
-		DOB: new Date("3/6/18"),
+		DOB: 43165.00,
 		Source: "KD #1",
 		Sex: "M",
 		Age: 84,
@@ -53,6 +53,21 @@ function sheetObjectTap(tap: GasTap): void {
 		t.deepEqual(destructed, data, "getData mouse data for write");
 	});
 
+	tap.test("convertFromGDate", (t: test): void => {
+		let expected: Date = new Date("7/14/2016");
+		
+		let spreadsheet: Spreadsheet = new Spreadsheet();
+		let mouseSheet: Sheet = new Sheet(spreadsheet, "Mice");
+		let sheetMouseDictionary: SheetObjectDictionary<MouseObject> = new SheetObjectDictionary(MouseObject, mouseSheet);
+		let mice: MouseObject[] = sheetMouseDictionary.translate();
+		let firstMouse: MouseObject = mice[0];
+		let observedDate: Date | null = firstMouse.DOB;
+
+		t.notEqual(observedDate, null, "Date must not be null");
+		if(observedDate == null) return;
+		t.equal(observedDate.getTime(), expected.getTime(), "Dates must match");
+	});
+
 }
 
 class MouseObject extends SheetObject {
@@ -90,7 +105,7 @@ class MouseObject extends SheetObject {
 		this.earId = data.Ear;
 		this.background = data.BackGround;
 		this.animalAcct = data.AP;
-		this.DOB = data.DOB;
+		this.DOB = this.convertFromGDate(data.DOB);
 		this.source = data.Source;
 		this.sex = data.Sex;
 		this.age = data.Age;
@@ -99,7 +114,7 @@ class MouseObject extends SheetObject {
 		this.location = data.Location;
 		this.studyNames = data["Study Name"];
 		this.notes = data.Note;
-		this.DOD = data.Sac;
+		this.DOD = this.convertFromGDate(data.Sac);
 		this.breedingDate = data.Breeding;
 		this.request = data.Request;
 		this.files = data["Genotyping Files"];
@@ -128,7 +143,7 @@ class MouseObject extends SheetObject {
 			Ear: this.earId,
 			BackGround: this.background,
 			AP: this.animalAcct,
-			DOB: this.DOB,
+			DOB: this.convertToGDate(this.DOB),
 			Source: this.source,
 			Sex: this.sex,
 			Age: this.age,
@@ -136,7 +151,7 @@ class MouseObject extends SheetObject {
 			Location: this.location,
 			"Study Name": this.studyNames,
 			Note: this.notes,
-			Sac: this.DOD,
+			Sac: this.convertToGDate(this.DOD),
 			Breeding: this.breedingDate,
 			Request: this.request,
 			"Genotyping Files": this.files,
@@ -162,6 +177,8 @@ class MouseObject extends SheetObject {
 	}
 
 	private processStrains(strainsData: string): string[] {
+		if((strainsData == null) || (strainsData == undefined)) throw `Attempting to process a null string from mouse: ${this.id}`;
+
 		let strains: string[] = strainsData.split(" ");
 		strains = strains.map((strain: string): string => {
 			//Remove anything between parenthesis; e.g., EOx(L1)
