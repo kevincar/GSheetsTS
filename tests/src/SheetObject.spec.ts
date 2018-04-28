@@ -54,25 +54,19 @@ function sheetObjectTap(tap: GasTap): void {
 	});
 
 	tap.test("convertFromGDate", (t: test): void => {
-		let date1String: string = "7/14/2016";
-		let date1gNumber: number = 42565;
+		let dateTest: Function = (dateString: string, dateNumber: number): void => {
+			let dateExpected: Date = new Date(dateString);
+			let dateObserved: Date | null = SheetObject.convertFromGDate(dateNumber);
 
-		let date1expected: Date = new Date(date1String);
-		let date1observed: Date | null = SheetObject.convertFromGDate(date1gNumber);
+			t.notEqual(dateObserved, null, "date should not be null");
+			if(dateObserved == null) return;
 
-		t.notEqual(date1observed, null, "date should not be null.");
-		if(date1observed == null) return;
-		t.equal(date1observed.getTime(), date1expected.getTime(), "time should be equal");
+			t.equal(dateObserved.getTime(), dateExpected.getTime(), "time should be equal");
+		};
 
-		let date2String: string = "12/19/1990";
-		let date2gNumber: number = 33226;
-
-		let date2expected: Date = new Date(date2String);
-		let date2observed: Date | null = SheetObject.convertFromGDate(date2gNumber);
-
-		t.notEqual(date2observed, null, "date should not be null");
-		if(date2observed == null) return;
-		t.equal(date2observed.getTime(), date2expected.getTime(), "time should match");
+		dateTest("7/14/2016", 42565);
+		dateTest("12/30/1900", 365);
+		dateTest("1/14/2018", 43114);
 	});
 
 }
