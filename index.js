@@ -271,30 +271,36 @@ var SheetObject = /** @class */ (function () {
             throw "dateValue: " + dateValue + " is not a string nor a number!";
         var gTime = dateValue * 24 * 3600 * 1000;
         var gDate = new Date(gTime);
-        var convertedTime = gDate.getTime() + this.getConvNum(gDate);
+        var convertedTime = gDate.getTime() + SheetObject.getConversionNumber(gDate);
         return new Date(convertedTime);
     };
     SheetObject.convertToGDate = function (date) {
         if (date == null)
             return date;
         var convertedTime = date.getTime();
-        var gTime = convertedTime - this.getConvNum(date);
+        var gTime = convertedTime - SheetObject.getConversionNumber(date);
         var dateValue = gTime / (24 * 3600 * 1000);
         return dateValue;
     };
-    SheetObject.getStdTimezoneOffset = function (date) {
+    SheetObject.getConversionNumber = function (date) {
+        // +0 - 13/12 hour difference
+        // -4 - 8 hour difference
+        // -6 - 
+        var UTCConversionNumber = SheetObject.gDateConversion;
+        var STDoffset = date.getTimezoneOffset() * 60 * 1000;
+        var oneHour = 1 * 60 * 60 * 1000;
+        var STDConversionNumber = UTCConversionNumber + STDoffset;
+        return STDConversionNumber;
+    };
+    SheetObject.isDaylightSavings = function (date) {
+        return date.getTimezoneOffset() < SheetObject.getSTDTimezoneOffset(date);
+    };
+    SheetObject.getSTDTimezoneOffset = function (date) {
         var jan = new Date(date.getFullYear(), 0, 1);
         var jul = new Date(date.getFullYear(), 6, 1);
         return Math.max(jan.getTimezoneOffset(), jul.getTimezoneOffset());
     };
-    SheetObject.isDst = function (date) {
-        return date.getTimezoneOffset() < SheetObject.getStdTimezoneOffset(date);
-    };
-    SheetObject.getConvNum = function (date) {
-        var convIndex = SheetObject.isDst(date) ? 0 : 1;
-        return SheetObject.gDateConversion[convIndex];
-    };
-    SheetObject.gDateConversion = [-2209143600000, -2209140000000];
+    SheetObject.gDateConversion = -2209161600000;
     return SheetObject;
 }());
 var SheetObjectDictionary = /** @class */ (function () {

@@ -42,9 +42,9 @@ declare abstract class SheetObject implements SheetObjectInstance {
     validate(data: SheetObjectInterface): boolean;
     static convertFromGDate(dateValue: string | number | null): Date | null;
     static convertToGDate(date: Date | null): number | null;
-    private static getStdTimezoneOffset(date);
-    private static isDst(date);
-    private static getConvNum(date);
+    private static getConversionNumber(date);
+    static isDaylightSavings(date: Date): boolean;
+    private static getSTDTimezoneOffset(date);
 }
 declare class SheetObjectDictionary<T extends SheetObject> {
     ctor: SheetObjectConstructor<T> | null;
