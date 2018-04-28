@@ -249,6 +249,7 @@ var Sheet = /** @class */ (function () {
 }());
 var SheetObject = /** @class */ (function () {
     function SheetObject() {
+        this.gDateConversion = 2209143600000;
     }
     SheetObject.prototype.getData = function () {
         return new Array();
@@ -260,6 +261,27 @@ var SheetObject = /** @class */ (function () {
             return result && isValueBad;
         }, true);
         return !allValuesBad;
+    };
+    SheetObject.prototype.convertFromGDate = function (dateValue) {
+        if (dateValue == null)
+            return dateValue;
+        if (typeof (dateValue) == 'string') {
+            dateValue = parseInt(dateValue);
+        }
+        if (typeof (dateValue) != 'number' || isNaN(dateValue))
+            throw "dateValue: " + dateValue + " is not a string nor a number!";
+        var gTime = dateValue * 24 * 3600 * 1000;
+        var gDate = new Date(gTime);
+        var convertedTime = gDate.getTime() - this.gDateConversion;
+        return new Date(convertedTime);
+    };
+    SheetObject.prototype.convertToGDate = function (date) {
+        if (date == null)
+            return date;
+        var convertedTime = date.getTime();
+        var gTime = convertedTime + this.gDateConversion;
+        var dateValue = gTime / (24 * 3600 * 1000);
+        return dateValue;
     };
     return SheetObject;
 }());
