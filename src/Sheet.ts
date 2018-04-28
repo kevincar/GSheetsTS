@@ -216,4 +216,8 @@ class Sheet {
 		
 		return true;
 	}
+
+	sort(column: number, ascending: boolean = false): void {
+		this.GASSheet.sort(column, ascending);
+	}
 }
