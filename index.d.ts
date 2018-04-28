@@ -37,11 +37,11 @@ interface SheetObjectConstructor<T extends SheetObject> {
     new (data: SheetObjectInterface | null): T;
 }
 declare abstract class SheetObject implements SheetObjectInstance {
-    gDateConversion: number;
+    static gDateConversion: number;
     getData(): SheetObjectInterface;
     validate(data: SheetObjectInterface): boolean;
-    convertFromGDate(dateValue: string | number | null): Date | null;
-    convertToGDate(date: Date | null): number | null;
+    static convertFromGDate(dateValue: string | number | null): Date | null;
+    static convertToGDate(date: Date | null): number | null;
 }
 declare class SheetObjectDictionary<T extends SheetObject> {
     ctor: SheetObjectConstructor<T> | null;

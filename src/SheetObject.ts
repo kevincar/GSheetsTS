@@ -10,7 +10,7 @@ interface SheetObjectConstructor<T extends SheetObject> {
 }
 
 abstract class SheetObject implements SheetObjectInstance {
-	gDateConversion: number = 2209143600000;
+	static gDateConversion: number = 2209143600000;
 	getData(): SheetObjectInterface {
 		return new Array();
 	}
@@ -25,7 +25,7 @@ abstract class SheetObject implements SheetObjectInstance {
 		return !allValuesBad;
 	}
 
-	convertFromGDate(dateValue: string | number | null): Date | null {
+	static convertFromGDate(dateValue: string | number | null): Date | null {
 		if(dateValue == null) return dateValue;
 
 		if(typeof(dateValue) == 'string') {
@@ -41,7 +41,7 @@ abstract class SheetObject implements SheetObjectInstance {
 		return new Date(convertedTime);
 	}
 
-	convertToGDate(date: Date | null): number | null {
+	static convertToGDate(date: Date | null): number | null {
 		if(date == null) return date;
 		let convertedTime: number = date.getTime();
 		let gTime: number = convertedTime + this.gDateConversion;

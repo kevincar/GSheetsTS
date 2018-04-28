@@ -105,7 +105,7 @@ class MouseObject extends SheetObject {
 		this.earId = data.Ear;
 		this.background = data.BackGround;
 		this.animalAcct = data.AP;
-		this.DOB = this.convertFromGDate(data.DOB);
+		this.DOB = SheetObject.convertFromGDate(data.DOB);
 		this.source = data.Source;
 		this.sex = data.Sex;
 		this.age = data.Age;
@@ -114,7 +114,7 @@ class MouseObject extends SheetObject {
 		this.location = data.Location;
 		this.studyNames = data["Study Name"];
 		this.notes = data.Note;
-		this.DOD = this.convertFromGDate(data.Sac);
+		this.DOD = SheetObject.convertFromGDate(data.Sac);
 		this.breedingDate = data.Breeding;
 		this.request = data.Request;
 		this.files = data["Genotyping Files"];
@@ -143,7 +143,7 @@ class MouseObject extends SheetObject {
 			Ear: this.earId,
 			BackGround: this.background,
 			AP: this.animalAcct,
-			DOB: this.convertToGDate(this.DOB),
+			DOB: SheetObject.convertToGDate(this.DOB),
 			Source: this.source,
 			Sex: this.sex,
 			Age: this.age,
@@ -151,7 +151,7 @@ class MouseObject extends SheetObject {
 			Location: this.location,
 			"Study Name": this.studyNames,
 			Note: this.notes,
-			Sac: this.convertToGDate(this.DOD),
+			Sac: SheetObject.convertToGDate(this.DOD),
 			Breeding: this.breedingDate,
 			Request: this.request,
 			"Genotyping Files": this.files,

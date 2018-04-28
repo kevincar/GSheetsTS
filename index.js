@@ -249,7 +249,6 @@ var Sheet = /** @class */ (function () {
 }());
 var SheetObject = /** @class */ (function () {
     function SheetObject() {
-        this.gDateConversion = 2209143600000;
     }
     SheetObject.prototype.getData = function () {
         return new Array();
@@ -262,7 +261,7 @@ var SheetObject = /** @class */ (function () {
         }, true);
         return !allValuesBad;
     };
-    SheetObject.prototype.convertFromGDate = function (dateValue) {
+    SheetObject.convertFromGDate = function (dateValue) {
         if (dateValue == null)
             return dateValue;
         if (typeof (dateValue) == 'string') {
@@ -275,7 +274,7 @@ var SheetObject = /** @class */ (function () {
         var convertedTime = gDate.getTime() - this.gDateConversion;
         return new Date(convertedTime);
     };
-    SheetObject.prototype.convertToGDate = function (date) {
+    SheetObject.convertToGDate = function (date) {
         if (date == null)
             return date;
         var convertedTime = date.getTime();
@@ -283,6 +282,7 @@ var SheetObject = /** @class */ (function () {
         var dateValue = gTime / (24 * 3600 * 1000);
         return dateValue;
     };
+    SheetObject.gDateConversion = 2209143600000;
     return SheetObject;
 }());
 var SheetObjectDictionary = /** @class */ (function () {
