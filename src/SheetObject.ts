@@ -50,9 +50,6 @@ abstract class SheetObject implements SheetObjectInstance {
 	}
 
 	private static getConversionNumber(date: Date): number {
-		// +0 - 13/12 hour difference
-		// -4 - 8 hour difference
-		// -6 - 
 		let UTCConversionNumber: number = SheetObject.gDateConversion;
 		let STDoffset: number = date.getTimezoneOffset() * 60 * 1000;
 		let oneHour: number = 1 * 60 * 60 * 1000;
