@@ -283,9 +283,6 @@ var SheetObject = /** @class */ (function () {
         return dateValue;
     };
     SheetObject.getConversionNumber = function (date) {
-        // +0 - 13/12 hour difference
-        // -4 - 8 hour difference
-        // -6 - 
         var UTCConversionNumber = SheetObject.gDateConversion;
         var STDoffset = date.getTimezoneOffset() * 60 * 1000;
         var oneHour = 1 * 60 * 60 * 1000;

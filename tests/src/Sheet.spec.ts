@@ -36,4 +36,21 @@ function sheetTap(tap: GasTap):void {
 
 		t.deepEqual(calAge, 0, "number values should not be undefined or null");
 	});
+
+	tap.test("headers", (t: test): void => {
+		let peopleSheet: Sheet = new Sheet(spreadsheet, "People");
+		peopleSheet.values = peopleSheet.values.map((rowData: any[], index: number): any[] => {
+			if(index != 0) return rowData;
+			rowData[rowData.length] = undefined;
+			return rowData;
+		});
+		let observed: any[] = peopleSheet.headers;
+		let nHeaders: number = observed.length;
+		let lastHeader: any = observed[nHeaders - 1];
+
+		Logger.log(observed);
+
+		t.notEqual(lastHeader, undefined, "The end of the headers should be defined");
+		t.notEqual(lastHeader, null, "The end of the headers should not be null");
+	})
 }
