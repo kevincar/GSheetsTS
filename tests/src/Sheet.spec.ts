@@ -48,8 +48,6 @@ function sheetTap(tap: GasTap):void {
 		let nHeaders: number = observed.length;
 		let lastHeader: any = observed[nHeaders - 1];
 
-		Logger.log(observed);
-
 		t.notEqual(lastHeader, undefined, "The end of the headers should be defined");
 		t.notEqual(lastHeader, null, "The end of the headers should not be null");
 	})

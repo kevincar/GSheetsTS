@@ -197,7 +197,15 @@ var Sheet = /** @class */ (function () {
     });
     Object.defineProperty(Sheet.prototype, "headers", {
         get: function () {
-            return this.values[0];
+            var headers = this.values[0];
+            var nHeaders = headers.length;
+            var i = nHeaders - 1;
+            var lastHeader = headers[i];
+            for (var curHeader = lastHeader; (i >= 0) && (curHeader != undefined) && (curHeader != null); i--) {
+                curHeader = headers[i];
+            }
+            headers.splice(i, nHeaders - i);
+            return headers;
         },
         enumerable: true,
         configurable: true

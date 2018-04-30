@@ -169,7 +169,16 @@ class Sheet {
 	}
 
 	get headers(): any[] {
-		return this.values[0];
+		let headers: any[] = this.values[0];
+		let nHeaders: number = headers.length;
+		let i: number = nHeaders - 1;
+		let lastHeader: any = headers[i];
+		for(let curHeader: any = lastHeader ; (i >= 0) && (curHeader != undefined) && (curHeader != null); i--) {
+			curHeader = headers[i];
+		}
+
+		headers.splice(i, nHeaders - i);
+		return headers;
 	}
 
 	get nRows(): number {

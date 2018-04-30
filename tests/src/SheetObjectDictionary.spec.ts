@@ -14,6 +14,8 @@ function sheetObjectDictionaryTap(tap: GasTap): void {
 
 	tap.test("Write testing", (t: test): void => {
 		let writeSheet: Sheet = new Sheet(ss, "WriteTest");
+		Logger.log(writeSheet.values[0].length);
+		Logger.log(writeSheet.headers.length);
 		let writeMiceDict: SheetObjectDictionary<MouseObject> = new SheetObjectDictionary(MouseObject, writeSheet);
 		let objs: MouseObject[] = writeMiceDict.translate();
 		let originalSize: number = 7;
