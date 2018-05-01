@@ -60,7 +60,6 @@ function sheetObjectTap(tap: GasTap): void {
 
 			t.notEqual(dateObserved, null, "date should not be null");
 			if(dateObserved == null) return;
-			Logger.log(`Timezone: ${dateExpected.getTimezoneOffset()}`);
 			t.equal(dateObserved.getTime(), dateExpected.getTime(), `time should be equal: ${dateObserved.getTime()}`);
 		};
 

@@ -173,9 +173,11 @@ class Sheet {
 		let nHeaders: number = headers.length;
 		let i: number = nHeaders - 1;
 		let lastHeader: any = headers[i];
-		for(let curHeader: any = lastHeader ; (i >= 0) && (curHeader != undefined) && (curHeader != null); i--) {
-			curHeader = headers[i];
+
+		while((i >= 0) && (lastHeader == undefined) || (lastHeader == null)) {
+			lastHeader = headers[--i];
 		}
+		i++;
 
 		headers.splice(i, nHeaders - i);
 		return headers;

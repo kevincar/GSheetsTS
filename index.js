@@ -201,9 +201,10 @@ var Sheet = /** @class */ (function () {
             var nHeaders = headers.length;
             var i = nHeaders - 1;
             var lastHeader = headers[i];
-            for (var curHeader = lastHeader; (i >= 0) && (curHeader != undefined) && (curHeader != null); i--) {
-                curHeader = headers[i];
+            while ((i >= 0) && (lastHeader == undefined) || (lastHeader == null)) {
+                lastHeader = headers[--i];
             }
+            i++;
             headers.splice(i, nHeaders - i);
             return headers;
         },
