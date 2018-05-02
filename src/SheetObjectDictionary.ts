@@ -66,7 +66,7 @@ class SheetObjectDictionary<T extends SheetObject>{
 	instanceToValueArray(instance: T): any[] | null {
 		let data: SheetObjectInterface = instance.getData();
 
-		if(data == null) return null;
+		//if(!instance.validate(data) || data == {}) return null;
 
 		return SheetObjectDictionary.dataObjectToValues(data);
 	}

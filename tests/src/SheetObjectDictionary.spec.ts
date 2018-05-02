@@ -49,7 +49,25 @@ function sheetObjectDictionaryTap(tap: GasTap): void {
 	});
 
 	tap.test("instanceToValueArray", (t: test): void => {
-		Logger.log("Need to implement");
+		let peopleSheet: Sheet = new Sheet(ss, "People");
+		let peopleSOD: SheetObjectDictionary<Person> = new SheetObjectDictionary(Person, peopleSheet);
+		let people: Person[] = peopleSOD.translate();
+		let initial: Person = people[0];
+		let observed: any[] | null = peopleSOD.instanceToValueArray(initial);
+		let expected: any[] = [
+			"Eric", 5, 25, 33947
+		];
+
+		if(observed == null) Logger.log("");
+		else Logger.log(observed);
+		Logger.log(expected);
+		t.deepEqual(observed, expected, "proper instance translation");
+
+		let mice: MouseObject[] = sod.translate();
+		let firstMouse: MouseObject = mice[0];
+		firstMouse.cageId = null;
+		observed = sod.instanceToValueArray(firstMouse);
+		t.equal(observed, null, "an instance that fails to validate should return null for a value array");
 	});
 
 	return;

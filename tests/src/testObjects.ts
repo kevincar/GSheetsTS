@@ -63,10 +63,10 @@ class MouseObject extends SheetObject {
 		}, {});
 	}
 
-	//validate(data: SheetObjectInterface): boolean {
-		//if(data["cage"] == null || data["cage"] == undefined) return false;	
-		//return true;
-	//}
+	validate(data: SheetObjectInterface): boolean {
+		if(data["cage"] == undefined || data["cage"] == null) return false;
+		return true;
+	}
 
 	getData(): SheetObjectInterface {
 		// TODO: Objects are responsible for taking in data, then they need to be responsible for spitting it back out for writtin
@@ -161,5 +161,14 @@ class Person extends SheetObject {
 		) return false;
 
 		return true;
+	}
+
+	getData(): SheetObjectInterface {
+		return {
+			"Name": this.name,
+			"Year": this.year,
+			"Age": this.age,
+			"Date": SheetObject.convertToGDate(this.date)
+		};
 	}
 }

@@ -31,7 +31,7 @@ function sheetTap(tap: GasTap):void {
 	tap.test("Cell Data with 0 number values should be 0 not undefined/null", (t: test): void => {
 		let peopleSheet: Sheet = new Sheet(spreadsheet, "People");
 		let sheetValues: any[][] = peopleSheet.values;
-		let calRow: any[] = sheetValues[4];
+		let calRow: any[] = sheetValues[5];
 		let calAge: number = calRow[2];
 
 		t.deepEqual(calAge, 0, "number values should not be undefined or null");
