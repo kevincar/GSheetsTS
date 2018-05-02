@@ -341,24 +341,36 @@ var SheetObjectDictionary = /** @class */ (function () {
         return instances;
     };
     SheetObjectDictionary.prototype.write = function (instances) {
+        var _this = this;
         if (!this.sheet)
             throw "cannot write to empty sheet";
         var values = [];
         values[0] = this.sheet.headers;
         instances.forEach(function (obj) {
-            var data = obj.getData();
-            var dataValues = Object.keys(data).reduce(function (result, curKey) {
-                var curValue = data[curKey];
-                if (curValue == null || curValue == undefined)
-                    curValue = "";
-                result.push(curValue);
-                return result;
-            }, []);
+            var dataValues = _this.instanceToValueArray(obj);
+            if (dataValues == null)
+                return;
             values.push(dataValues);
         });
         this.sheet.values = values;
         this.sheet.write();
         return true;
+    };
+    SheetObjectDictionary.dataObjectToValues = function (data) {
+        var propertyNames = Object.keys(data);
+        return propertyNames.reduce(function (result, curProperty) {
+            var curValue = data[curProperty];
+            if (curValue == null || curValue == undefined)
+                curValue = "";
+            result.push(curValue);
+            return result;
+        }, []);
+    };
+    SheetObjectDictionary.prototype.instanceToValueArray = function (instance) {
+        var data = instance.getData();
+        if (data == null)
+            return null;
+        return SheetObjectDictionary.dataObjectToValues(data);
     };
     return SheetObjectDictionary;
 }());

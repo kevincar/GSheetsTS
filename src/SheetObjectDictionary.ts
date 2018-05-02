@@ -41,13 +41,8 @@ class SheetObjectDictionary<T extends SheetObject>{
 		values[0] = this.sheet.headers;
 
 		instances.forEach((obj: T): void => {
-			let data: SheetObjectInterface = obj.getData();
-			let dataValues: any[] = Object.keys(data).reduce((result: any[], curKey: string): any => {
-				let curValue: any = data[curKey];
-				if(curValue == null || curValue == undefined) curValue = "";
-				result.push(curValue);
-				return result;
-			}, []);
+			let dataValues: any[] | null = this.instanceToValueArray(obj);
+			if(dataValues == null) return;
 			values.push(dataValues);
 		});
 
@@ -55,5 +50,24 @@ class SheetObjectDictionary<T extends SheetObject>{
 		this.sheet.write();
 
 		return true;
+	}
+
+	static dataObjectToValues(data: SheetObjectInterface): any[] {
+		let propertyNames: string[] = Object.keys(data);
+
+		return propertyNames.reduce((result: any[], curProperty: string): any => {
+			let curValue: any = data[curProperty];
+			if(curValue == null || curValue == undefined) curValue = "";
+			result.push(curValue);
+			return result;
+		}, []);
+	}
+
+	instanceToValueArray(instance: T): any[] | null {
+		let data: SheetObjectInterface = instance.getData();
+
+		if(data == null) return null;
+
+		return SheetObjectDictionary.dataObjectToValues(data);
 	}
 }

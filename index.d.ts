@@ -53,6 +53,8 @@ declare class SheetObjectDictionary<T extends SheetObject> {
     [property: string]: any;
     translate(): T[];
     write(instances: T[]): boolean;
+    static dataObjectToValues(data: SheetObjectInterface): any[];
+    instanceToValueArray(instance: T): any[] | null;
 }
 declare class Spreadsheet {
     private _GASSpreadsheet;

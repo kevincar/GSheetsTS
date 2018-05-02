@@ -34,6 +34,24 @@ function sheetObjectDictionaryTap(tap: GasTap): void {
 		}, "writing");
 	});
 
+	tap.test("dataObjectToValues", (t: test): void => {
+		let data = {
+			a: "1",
+			b: "2",
+			d: "4",
+			e: null,
+			f: "6"
+		};
+
+		let values: any[] = SheetObjectDictionary.dataObjectToValues(data);
+		t.equal(values[0], "1", "values test 1");
+		t.equal(values[3], "", "values test 3");
+	});
+
+	tap.test("instanceToValueArray", (t: test): void => {
+		Logger.log("Need to implement");
+	});
+
 	return;
 }
 
