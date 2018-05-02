@@ -133,3 +133,14 @@ class MouseObject extends SheetObject {
 interface Genotype {
 	[strain: string]: string;
 }
+
+class Person {
+	name: string | null = null;
+	year: number | null = null;
+	age: number | null = null;
+	date: Date | null = null;
+
+	constructor(data: SheetObjectInterface) {
+
+	}
+}
