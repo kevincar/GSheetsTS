@@ -134,13 +134,32 @@ interface Genotype {
 	[strain: string]: string;
 }
 
-class Person {
+class Person extends SheetObject {
 	name: string | null = null;
 	year: number | null = null;
 	age: number | null = null;
 	date: Date | null = null;
 
-	constructor(data: SheetObjectInterface) {
+	constructor(data: SheetObjectInterface | null) {
+		super();
+		if(data == null) return;
 
+		if(!this.validate(data)) return;
+
+		this.name = data["Name"];
+		this.year = data["Year"];
+		this.age = data["Age"];
+		this.date = SheetObject.convertFromGDate(data["Date"]);
+	}
+
+	validate(data: SheetObjectInterface): boolean {
+		if(
+			(data["Name"] == undefined) ||
+			(data["Year"] == undefined) ||
+			(data["Age"] == undefined) ||
+			(data["Date"] == undefined)
+		) return false;
+
+		return true;
 	}
 }
