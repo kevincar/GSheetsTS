@@ -368,7 +368,8 @@ var SheetObjectDictionary = /** @class */ (function () {
     };
     SheetObjectDictionary.prototype.instanceToValueArray = function (instance) {
         var data = instance.getData();
-        //if(!instance.validate(data) || data == {}) return null;
+        if (!instance.validate(data) || data == {})
+            return null;
         return SheetObjectDictionary.dataObjectToValues(data);
     };
     return SheetObjectDictionary;
