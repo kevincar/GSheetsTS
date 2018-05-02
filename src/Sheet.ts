@@ -229,6 +229,13 @@ class Sheet {
 	}
 
 	sort(column: number, ascending: boolean = false): void {
+		/*
+		 * Sort
+		 *
+		 * Parameters
+		 * column - the column to sort first column is column 1 not 0
+		 * ascending - whether to sort in ascending fashion
+		 */
 		this.GASSheet.sort(column, ascending);
 	}
 }
