@@ -14,6 +14,7 @@ declare class Sheet {
     private readonly APISheet;
     readonly sheetId: number;
     readonly name: string;
+    readonly APIvalues: any[][];
     values: any[][];
     readonly formulas: string[][];
     readonly formats: Sheets.CellFormat[][];
@@ -40,7 +41,7 @@ declare abstract class SheetObject implements SheetObjectInstance {
     private static gDateConversion;
     getData(): SheetObjectInterface;
     validate(data: SheetObjectInterface): boolean;
-    static convertFromGDate(dateValue: string | number | null): Date | null;
+    static convertFromGDate(dateValue: string | number | Date | null): Date | null;
     static convertToGDate(date: Date | null): number | null;
     private static getConversionNumber(date);
     static isDaylightSavings(date: Date): boolean;

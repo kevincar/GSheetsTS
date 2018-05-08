@@ -25,10 +25,12 @@ abstract class SheetObject implements SheetObjectInstance {
 		return !allValuesBad;
 	}
 
-	static convertFromGDate(dateValue: string | number | null): Date | null {
+	static convertFromGDate(dateValue: string | number | Date | null): Date | null {
 		if(dateValue == null) return dateValue;
+		if(dateValue instanceof Date) return dateValue;
 
 		if(typeof(dateValue) == 'string') {
+			if(dateValue == "") return null;
 			dateValue = parseInt(dateValue);
 		}
 

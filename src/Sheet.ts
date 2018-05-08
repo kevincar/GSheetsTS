@@ -66,7 +66,7 @@ class Sheet {
 		throw "Sheet: Name was never set in constructor!";
 	}
 
-	get values(): any[][] {
+	get APIvalues(): any[][] {
 		if(this._values != null) return this._values;
 
 		let values: any[][] = Array();
@@ -87,6 +87,16 @@ class Sheet {
 		});
 
 		this._values = values;
+
+		return this._values;
+	}
+
+	get values(): any[][] {
+		if(this._values != null) return this._values;
+
+		let values: any[][] = Array();
+
+		this._values = this.GASSheet.getDataRange().getValues();
 
 		return this._values;
 	}

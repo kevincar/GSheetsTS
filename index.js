@@ -84,7 +84,7 @@ var Sheet = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    Object.defineProperty(Sheet.prototype, "values", {
+    Object.defineProperty(Sheet.prototype, "APIvalues", {
         get: function () {
             var _this = this;
             if (this._values != null)
@@ -106,6 +106,17 @@ var Sheet = /** @class */ (function () {
                 });
             });
             this._values = values;
+            return this._values;
+        },
+        enumerable: true,
+        configurable: true
+    });
+    Object.defineProperty(Sheet.prototype, "values", {
+        get: function () {
+            if (this._values != null)
+                return this._values;
+            var values = Array();
+            this._values = this.GASSheet.getDataRange().getValues();
             return this._values;
         },
         set: function (val) {
@@ -252,6 +263,13 @@ var Sheet = /** @class */ (function () {
     };
     Sheet.prototype.sort = function (column, ascending) {
         if (ascending === void 0) { ascending = false; }
+        /*
+         * Sort
+         *
+         * Parameters
+         * column - the column to sort first column is column 1 not 0
+         * ascending - whether to sort in ascending fashion
+         */
         this.GASSheet.sort(column, ascending);
     };
     return Sheet;
@@ -273,7 +291,11 @@ var SheetObject = /** @class */ (function () {
     SheetObject.convertFromGDate = function (dateValue) {
         if (dateValue == null)
             return dateValue;
+        if (dateValue instanceof Date)
+            return dateValue;
         if (typeof (dateValue) == 'string') {
+            if (dateValue == "")
+                return null;
             dateValue = parseInt(dateValue);
         }
         if (typeof (dateValue) != 'number' || isNaN(dateValue))
