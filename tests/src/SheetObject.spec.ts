@@ -68,6 +68,11 @@ function sheetObjectTap(tap: GasTap): void {
 		dateTest("1/14/2018", 43114);
 	});
 
+	tap.test("convertToGDate", (t: test): void => {
+		t.equal(SheetObject.convertToGDate(null), null, "null input should provide null output");
+		t.equal(SheetObject.convertToGDate(new Date("7/14/2016")), 42565, "Date's should match");
+	});
+
 }
 
 
