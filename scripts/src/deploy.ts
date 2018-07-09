@@ -188,16 +188,16 @@ function main(authClient: googleAuth.OAuth2Client): void {
         };
 
         let requestBody: any = {
-            files: [
-                file,
-                manifest
-            ]
+			files: [
+				manifest,
+				file
+			]
         };
 
         let request = {
             auth: authClient,
-            scriptId: scriptId,
-            resource: requestBody
+			scriptId: scriptId,
+			resource: requestBody
         };
 
         console.log("Calling update content API");
