@@ -24,9 +24,9 @@ declare class Sheet {
     readonly nRows: number;
     readonly nColumns: number;
     constructor(parent: Spreadsheet, name: string);
-    private extractValue(value);
+    private extractValue;
     write(): boolean;
-    private clear();
+    private clear;
     sort(column: number, ascending?: boolean): void;
 }
 interface SheetObjectInterface {
@@ -43,9 +43,9 @@ declare abstract class SheetObject implements SheetObjectInstance {
     validate(data: SheetObjectInterface): boolean;
     static convertFromGDate(dateValue: string | number | Date | null): Date | null;
     static convertToGDate(date: Date | null): number | null;
-    private static getConversionNumber(date);
+    private static getConversionNumber;
     static isDaylightSavings(date: Date): boolean;
-    private static getSTDTimezoneOffset(date);
+    private static getSTDTimezoneOffset;
 }
 declare class SheetObjectDictionary<T extends SheetObject> {
     ctor: SheetObjectConstructor<T> | null;
