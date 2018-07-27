@@ -1,6 +1,7 @@
 interface SheetObjectInterface {
 	[property: string]: any;
 }
+
 interface SheetObjectInstance {
 
 }
@@ -12,7 +13,10 @@ interface SheetObjectConstructor<T extends SheetObject> {
 abstract class SheetObject implements SheetObjectInstance {
 	private static gDateConversion: number = -2209161600000;
 	getData(): SheetObjectInterface {
-		return new Array();
+		return Object.keys(this).reduce((result: SheetObjectInterface, key: string): SheetObjectInterface => {
+			result[key] = (<SheetObjectInterface>this)[key];
+			return result;
+		}, {});
 	}
 
 	validate(data: SheetObjectInterface): boolean {

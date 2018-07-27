@@ -278,7 +278,11 @@ var SheetObject = /** @class */ (function () {
     function SheetObject() {
     }
     SheetObject.prototype.getData = function () {
-        return new Array();
+        var _this = this;
+        return Object.keys(this).reduce(function (result, key) {
+            result[key] = _this[key];
+            return result;
+        }, {});
     };
     SheetObject.prototype.validate = function (data) {
         var allValuesBad = Object.keys(data).reduce(function (result, curKey) {
