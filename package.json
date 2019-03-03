@@ -6,7 +6,8 @@
   "scripts": {
 	  "build": "tsc && tsc --project ./tests",
 	  "deploy": "clasp push",
-	  "test": "npm run build && npm run deploy && clasp run runGasTests"
+	  "test": "npm run build && npm run deploy && clasp run runGasTests",
+	  "clean": "rm index.js index.d.ts && rm -rf ./tests/dist"
   },
   "repository": {
     "type": "git",
