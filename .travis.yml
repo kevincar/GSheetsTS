@@ -6,4 +6,7 @@ before_install:
   -in clasprc.tar.gz.enc -out ./clasprc.tar.gz -d
 - tar xvf ./clasprc.tar.gz
 - mv ./.gclasprc.json ~/.clasprc.json
+install:
 - npm install
+script:
+    - npm run test
