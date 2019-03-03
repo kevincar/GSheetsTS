@@ -8,7 +8,15 @@ if(typeof(GasTap) === 'undefined') {
 }
 
 function runGasTests(): any {
-	let tap: GasTap = new GasTap();
+	let logs: string[] = [];
+
+	let logger: (msg: string) => void = (msg: string): void => {
+		logs.push(msg);
+	};
+	let gasTapOptions: IOptions = {
+		loggerFunc: logger
+	};
+	let tap: GasTap = new GasTap(gasTapOptions);
 
 	/*
 	 * INSERT TEST FUNCTIONS HERE.
@@ -21,8 +29,7 @@ function runGasTests(): any {
 
 	let tp: tapResults = tap.finish();
 
-	return {
-		log: Logger.getLog(),
-		results: tp
-	};
+	logs.push(JSON.stringify(tp));
+
+	return logs;
 }
