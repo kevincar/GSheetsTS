@@ -4,7 +4,9 @@
   "description": "Google Apps Script and SheetsAPIv4 wrappers in TypeScript",
   "main": "index.js",
   "scripts": {
-    "test": "tsc && tsc --project ./tests && tsc --project ./scripts && cd ./scripts/dist && node ./deploy.js && cd ../../"
+	  "build": "tsc && tsc --project ./tests",
+	  "deploy": "clasp push",
+	  "test": "npm run build && npm run deploy && clasp run runGasTests"
   },
   "repository": {
     "type": "git",
@@ -28,6 +30,7 @@
     "@types/google-apps-script": "0.0.18",
     "@types/node": "^10.12.27",
     "async": "^2.6.2",
+    "clasp": "^1.0.0",
     "googleapis": "^26.0.1",
     "tsgast": "^1.0.71",
     "typescript": "^2.9.2"
