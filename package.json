@@ -1,11 +1,11 @@
 {
   "name": "gsheetsts",
-  "version": "0.3.6",
+  "version": "0.3.7",
   "description": "Google Apps Script and SheetsAPIv4 wrappers in TypeScript",
   "main": "index.js",
   "scripts": {
-	  "build": "tsc && tsc --project ./tests",
-	  "deploy": "clasp push",
+	  "build": "sh ./scripts/build.sh",
+	  "deploy": "clasp pull && clasp push",
 	  "test": "npm run build && npm run deploy && clasp run runGasTests",
 	  "clean": "rm index.js index.d.ts && rm -rf ./tests/dist"
   },
