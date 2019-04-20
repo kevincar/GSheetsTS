@@ -74,9 +74,22 @@ class Spreadsheet {
 		this._spreadsheetId = spreadsheetId;
 	}
 
-	requestGASSpreadsheet(spreadsheetId: string): GoogleAppsScript.Spreadsheet.Spreadsheet {
-		if(spreadsheetId == this.spreadsheetId) return this.GASSpreadsheet;
-		throw "Invalid spreadsheet ID";
+	requestGASSheet(sheetName: string): GoogleAppsScript.Spreadsheet.Sheet {
+		return this.GASSpreadsheet.getSheetByName(sheetName);
+	}
+	
+	createSheet(sheetName: string): boolean {
+
+		this.GASSpreadsheet.insertSheet(sheetName);
+		this._sheetNames = null;
+
+		return true;
 	}
 
+	deleteSheet(sheetName: string): boolean {
+		
+		let s: GoogleAppsScript.Spreadsheet.Sheet = this.GASSpreadsheet.getSheetByName(sheetName);
+		this.GASSpreadsheet.deleteSheet(s);
+		return true;
+	}
 }
