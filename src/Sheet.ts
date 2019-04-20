@@ -28,8 +28,7 @@ class Sheet {
 	private get GASSheet(): GoogleAppsScript.Spreadsheet.Sheet {
 		if(this._GASSheet != null) return this._GASSheet;
 
-		let ss: GoogleAppsScript.Spreadsheet.Spreadsheet = this.parentSpreadsheet.requestGASSpreadsheet(this.parentSpreadsheet.spreadsheetId);
-		this._GASSheet = ss.getSheetByName(this.name);
+		this._GASSheet = this.parentSpreadsheet.requestGASSheet(this.name);
 
 		return this._GASSheet;
 	}

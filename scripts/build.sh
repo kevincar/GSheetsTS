@@ -1,10 +1,10 @@
 #! /bin/bash
 
 # Transpile TypeScript into JavaScript
-tsc
+tsc || exit 1
 
 # Transpile Tests
-tsc --project ./tests
+tsc --project ./tests || exit 1
 
 # add trile-slash reference directive to our declaration file
 mv ./index.d.ts ./index.d.ts.bk
