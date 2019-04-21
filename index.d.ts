@@ -70,5 +70,7 @@ declare class Spreadsheet {
     readonly name: string;
     readonly sheetNames: string[];
     constructor(spreadsheetId?: string | null);
-    requestGASSpreadsheet(spreadsheetId: string): GoogleAppsScript.Spreadsheet.Spreadsheet;
+    requestGASSheet(sheetName: string): GoogleAppsScript.Spreadsheet.Sheet;
+    createSheet(sheetName: string): boolean;
+    deleteSheet(sheetName: string): boolean;
 }

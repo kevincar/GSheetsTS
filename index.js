@@ -39,8 +39,7 @@ var Sheet = /** @class */ (function () {
         get: function () {
             if (this._GASSheet != null)
                 return this._GASSheet;
-            var ss = this.parentSpreadsheet.requestGASSpreadsheet(this.parentSpreadsheet.spreadsheetId);
-            this._GASSheet = ss.getSheetByName(this.name);
+            this._GASSheet = this.parentSpreadsheet.requestGASSheet(this.name);
             return this._GASSheet;
         },
         enumerable: true,
@@ -480,10 +479,22 @@ var Spreadsheet = /** @class */ (function () {
         enumerable: true,
         configurable: true
     });
-    Spreadsheet.prototype.requestGASSpreadsheet = function (spreadsheetId) {
-        if (spreadsheetId == this.spreadsheetId)
-            return this.GASSpreadsheet;
-        throw "Invalid spreadsheet ID";
+    Spreadsheet.prototype.requestGASSheet = function (sheetName) {
+        return this.GASSpreadsheet.getSheetByName(sheetName);
+    };
+    //requestGASSpreadsheet(spreadsheetId: string): GoogleAppsScript.Spreadsheet.Spreadsheet {
+    //if(spreadsheetId == this.spreadsheetId) return this.GASSpreadsheet;
+    //throw "Invalid spreadsheet ID";
+    //}
+    Spreadsheet.prototype.createSheet = function (sheetName) {
+        this.GASSpreadsheet.insertSheet(sheetName);
+        this._sheetNames = null;
+        return true;
+    };
+    Spreadsheet.prototype.deleteSheet = function (sheetName) {
+        var s = this.GASSpreadsheet.getSheetByName(sheetName);
+        this.GASSpreadsheet.deleteSheet(s);
+        return true;
     };
     return Spreadsheet;
 }());
