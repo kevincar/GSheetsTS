@@ -482,6 +482,9 @@ var Spreadsheet = /** @class */ (function () {
     Spreadsheet.prototype.requestGASSheet = function (sheetName) {
         return this.GASSpreadsheet.getSheetByName(sheetName);
     };
+    Spreadsheet.prototype.isSheetExist = function (sheetName) {
+        return this.sheetNames.filter(function (e) { return e == sheetName; }).length > 0;
+    };
     Spreadsheet.prototype.createSheet = function (sheetName) {
         this.GASSpreadsheet.insertSheet(sheetName);
         this._sheetNames = null;
@@ -489,6 +492,9 @@ var Spreadsheet = /** @class */ (function () {
     };
     Spreadsheet.prototype.deleteSheet = function (sheetName) {
         var s = this.GASSpreadsheet.getSheetByName(sheetName);
+        if (s == null) {
+            return false;
+        }
         this.GASSpreadsheet.deleteSheet(s);
         return true;
     };

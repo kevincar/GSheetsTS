@@ -1,3 +1,4 @@
+/// <reference path="./src/types/SheetsAPI/sheets.d.ts" />
 declare class Sheet {
     private _parentSpreadsheet;
     private _GASSheet;
@@ -70,6 +71,7 @@ declare class Spreadsheet {
     readonly sheetNames: string[];
     constructor(spreadsheetId?: string | null);
     requestGASSheet(sheetName: string): GoogleAppsScript.Spreadsheet.Sheet;
+    isSheetExist(sheetName: string): boolean;
     createSheet(sheetName: string): boolean;
     deleteSheet(sheetName: string): boolean;
 }
