@@ -5,9 +5,9 @@
   "main": "index.js",
   "scripts": {
 	  "build": "sh ./scripts/build.sh",
-	  "deploy": "clasp pull && clasp push",
+	  "deploy": "clasp push",
 	  "test": "npm run build && npm run deploy && clasp run runGasTests",
-	  "clean": "rm index.js index.d.ts && rm -rf ./tests/dist"
+	  "clean": "rm index.js index.d.ts && rm -rf ./tests/dist && clasp pull && rm ./tests/dist/main.js"
   },
   "repository": {
     "type": "git",
