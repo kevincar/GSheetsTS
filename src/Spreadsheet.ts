@@ -77,6 +77,10 @@ class Spreadsheet {
 	requestGASSheet(sheetName: string): GoogleAppsScript.Spreadsheet.Sheet {
 		return this.GASSpreadsheet.getSheetByName(sheetName);
 	}
+
+	isSheetExist(sheetName: string): boolean {
+		return this.sheetNames.filter(e => e == sheetName).length > 0;
+	}
 	
 	createSheet(sheetName: string): boolean {
 
@@ -88,7 +92,10 @@ class Spreadsheet {
 
 	deleteSheet(sheetName: string): boolean {
 		
-		let s: GoogleAppsScript.Spreadsheet.Sheet = this.GASSpreadsheet.getSheetByName(sheetName);
+		let s: GoogleAppsScript.Spreadsheet.Sheet | null = this.GASSpreadsheet.getSheetByName(sheetName);
+		if(s == null) {
+			return false;
+		}
 		this.GASSpreadsheet.deleteSheet(s);
 		return true;
 	}
