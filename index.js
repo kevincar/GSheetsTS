@@ -482,10 +482,6 @@ var Spreadsheet = /** @class */ (function () {
     Spreadsheet.prototype.requestGASSheet = function (sheetName) {
         return this.GASSpreadsheet.getSheetByName(sheetName);
     };
-    //requestGASSpreadsheet(spreadsheetId: string): GoogleAppsScript.Spreadsheet.Spreadsheet {
-    //if(spreadsheetId == this.spreadsheetId) return this.GASSpreadsheet;
-    //throw "Invalid spreadsheet ID";
-    //}
     Spreadsheet.prototype.createSheet = function (sheetName) {
         this.GASSpreadsheet.insertSheet(sheetName);
         this._sheetNames = null;

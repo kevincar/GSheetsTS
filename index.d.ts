@@ -1,4 +1,3 @@
-/// <reference path="./src/types/SheetsAPI/sheets.d.ts" />
 declare class Sheet {
     private _parentSpreadsheet;
     private _GASSheet;

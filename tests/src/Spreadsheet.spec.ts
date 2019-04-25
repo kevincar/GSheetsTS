@@ -26,4 +26,18 @@ function spreadsheetTest(tap: GasTap):void {
 		t.notEqual(sheetFound, false, "sheet deleted");
 	});
 
+	tap.test("isSheetExist", (t: test): void => {
+		let sheetName: string = "testSheet";
+		let ss: Spreadsheet = new Spreadsheet();
+
+		ss.deleteSheet(sheetName);
+
+		t.equal(ss.isSheetExist(sheetName), false, "should not exist now");
+
+		ss.createSheet(sheetName);
+		t.equal(ss.isSheetExist(sheetname), false, "should exist now");
+
+		ss.deleteSheet(sheetName);
+	});
+
 }
