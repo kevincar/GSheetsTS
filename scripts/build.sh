@@ -4,7 +4,9 @@
 tsc || exit 1
 
 # Transpile Tests
-tsc --project ./tests || exit 1
+cd ./tests || exit 1
+tsc 
+cd ..
 
 # add trile-slash reference directive to our declaration file
 mv ./index.d.ts ./index.d.ts.bk
