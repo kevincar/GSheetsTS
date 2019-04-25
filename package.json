@@ -1,6 +1,6 @@
 {
   "name": "gsheetsts",
-  "version": "0.3.8",
+  "version": "0.3.81",
   "description": "Google Apps Script and SheetsAPIv4 wrappers in TypeScript",
   "main": "index.js",
   "scripts": {
