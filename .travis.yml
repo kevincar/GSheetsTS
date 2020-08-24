@@ -2,8 +2,7 @@ language: node_js
 node_js:
 - node
 before_install:
-- openssl aes-256-cbc -K $encrypted_46068108dcef_key -iv $encrypted_46068108dcef_iv 
-  -in clasprc.tar.gz.enc -out ./clasprc.tar.gz -d
+- openssl aes-256-cbc -K $encrypted_eee26a49a0ef_key -iv $encrypted_eee26a49a0ef_iv -in ./clasprc.tar.gz.enc -out ./clasprc.tar.gz -d
 - tar xvf ./clasprc.tar.gz
 - mv ./.gclasprc.json ~/.clasprc.json
 install:
