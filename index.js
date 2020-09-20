@@ -1,5 +1,5 @@
 "use strict";
-/// <reference path="../node_modules/googleapis/build/src/apis/sheets/v4" />
+///// <reference path="../node_modules/googleapis/build/src/apis/sheets/v4" />
 var Sheet = /** @class */ (function () {
     /*
      * Methods
@@ -399,7 +399,7 @@ var SheetObjectDictionary = /** @class */ (function () {
     };
     return SheetObjectDictionary;
 }());
-/// <reference path="../node_modules/googleapis/build/src/apis/sheets/v4" />
+///// <reference path="../node_modules/googleapis/build/src/apis/sheets/v4" />
 var Spreadsheet = /** @class */ (function () {
     /*
      * Methods

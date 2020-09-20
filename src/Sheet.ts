@@ -1,4 +1,4 @@
-/// <reference path="../node_modules/googleapis/build/src/apis/sheets/v4" />
+///// <reference path="../node_modules/googleapis/build/src/apis/sheets/v4" />
 
 class Sheet {
 	/*
