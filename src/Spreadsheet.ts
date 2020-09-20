@@ -97,6 +97,7 @@ class Spreadsheet {
 			return false;
 		}
 		this.GASSpreadsheet.deleteSheet(s);
+		this._sheetNames = null;
 		return true;
 	}
 }
