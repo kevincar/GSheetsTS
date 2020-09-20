@@ -59,8 +59,8 @@ class Spreadsheet {
 	get sheetNames(): string[] {
 		if(this._sheetNames != null) return this._sheetNames;
 
-		this._sheetNames = this.APISpreadsheet.sheets.map((sheet: Sheets.Sheet): string => {
-			return sheet.properties.title;
+		this._sheetNames = this.GASSpreadsheet.getSheets().map((sheet: GoogleAppsScript.Spreadsheet.Sheet): string => {
+			return sheet.getSheetName();
 		});
 
 		return this._sheetNames;

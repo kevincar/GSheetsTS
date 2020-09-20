@@ -471,8 +471,8 @@ var Spreadsheet = /** @class */ (function () {
         get: function () {
             if (this._sheetNames != null)
                 return this._sheetNames;
-            this._sheetNames = this.APISpreadsheet.sheets.map(function (sheet) {
-                return sheet.properties.title;
+            this._sheetNames = this.GASSpreadsheet.getSheets().map(function (sheet) {
+                return sheet.getSheetName();
             });
             return this._sheetNames;
         },

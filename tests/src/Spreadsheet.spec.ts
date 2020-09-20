@@ -35,7 +35,7 @@ function spreadsheetTest(tap: GasTap):void {
 		t.equal(ss.isSheetExist(sheetName), false, "should not exist now");
 
 		ss.createSheet(sheetName);
-		t.equal(ss.isSheetExist(sheetName), false, "should exist now");
+		t.equal(ss.isSheetExist(sheetName), true, "should exist now");
 
 		ss.deleteSheet(sheetName);
 	});
