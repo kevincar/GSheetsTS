@@ -496,6 +496,7 @@ var Spreadsheet = /** @class */ (function () {
             return false;
         }
         this.GASSpreadsheet.deleteSheet(s);
+        this._sheetNames = null;
         return true;
     };
     return Spreadsheet;

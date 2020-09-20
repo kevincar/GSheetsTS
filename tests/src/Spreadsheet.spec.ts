@@ -23,7 +23,7 @@ function spreadsheetTest(tap: GasTap):void {
 
 		ss.deleteSheet(sheetName);
 		sheetFound = ss.sheetNames.filter((e) => {return e == sheetName;}).length > 0;
-		t.notEqual(sheetFound, false, "sheet deleted");
+		t.equal(sheetFound, false, "sheet deleted");
 	});
 
 	tap.test("isSheetExist", (t: test): void => {
