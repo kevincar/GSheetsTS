@@ -6,12 +6,12 @@ function spreadsheetTest(tap: GasTap):void {
 		t.equal(observed, expected, "names are equal");
 	});
 
-	tap.test("Spreadsheet should give GASSheet object", (t: test): void => {
-		let ss: Spreadsheet = new Spreadsheet();
-		let sheetName: string = "testSheet";
-		let GASSheet: GoogleAppsScript.Spreadsheet.Sheet | null = ss.requestGASSheet(sheetName);
-		t.notEqual(GASSheet, null, "Should not be null");
-	});
+	//tap.test("Spreadsheet should give GASSheet object", (t: test): void => {
+		//let ss: Spreadsheet = new Spreadsheet();
+		//let sheetName: string = "testSheet";
+		//let GASSheet: GoogleAppsScript.Spreadsheet.Sheet | null = ss.requestGASSheet(sheetName);
+		//t.notEqual(GASSheet, null, "Should not be null");
+	//});
 
 	tap.test("Spreadsheet should be able to create and delete a sheet", (t: test): void => {
 		let sheetName: string = "testSheet";

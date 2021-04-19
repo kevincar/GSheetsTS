@@ -1,36 +1,36 @@
 function sheetObjectDictionaryTap(tap: GasTap): void {
 
 	let ss: Spreadsheet = new Spreadsheet();
-	let sheet: Sheet = new Sheet(ss, "Mice");
-	let sod = new SheetObjectDictionary(MouseObject, sheet);
+	let sheet: Sheet = new Sheet(ss, "Students");
+	let sod = new SheetObjectDictionary(StudentObject, sheet);
 
 	tap.test("Translation testing", (t: test) => {
-		let objs: MouseObject[] = sod.translate();
+		let objs: StudentObject[] = sod.translate();
 
 		t.notEqual(objs.length, 0, "Object.length is non-zero");
-
-		t.equal(objs[0].id, "H2738", "First mouse object should equal H2738");
+		Logger.log(`Object Length: {objs.length}`);
+		t.equal(objs[0].id, 9, "First student object should equal 9");
 	});
 
 	tap.test("Write testing", (t: test): void => {
 		let writeSheet: Sheet = new Sheet(ss, "WriteTest");
 		Logger.log(writeSheet.values[0].length);
 		Logger.log(writeSheet.headers.length);
-		let writeMiceDict: SheetObjectDictionary<MouseObject> = new SheetObjectDictionary(MouseObject, writeSheet);
-		let objs: MouseObject[] = writeMiceDict.translate();
+		let writeStudentDict: SheetObjectDictionary<StudentObject> = new SheetObjectDictionary(StudentObject, writeSheet);
+		let objs: StudentObject[] = writeStudentDict.translate();
 		let originalSize: number = 7;
 
 		// Duplicate last row. But if length is > 10, set back to original size
-		let nMice: number = objs.length;
-		if(nMice < 10) {
-			let lastMouse: MouseObject = objs[nMice-1];
-			objs.push(lastMouse);
+		let nStudent: number = objs.length;
+		if(nStudent < 10) {
+			let lastStudent: StudentObject = objs[nStudent-1];
+			objs.push(lastStudent);
 		}
 		else {
 			objs.splice(originalSize, objs.length-originalSize);
 		}
 		t.notThrow((): void => {
-			writeMiceDict.write(objs);
+			writeStudentDict.write(objs);
 		}, "writing");
 	});
 
@@ -55,7 +55,7 @@ function sheetObjectDictionaryTap(tap: GasTap): void {
 		let initial: Person = people[0];
 		let observed: any[] | null = peopleSOD.instanceToValueArray(initial);
 		let expected: any[] = [
-			"Eric", 5, 25, 33947
+			"Billy", 1, 12, 35537.958333333336
 		];
 
 		if(observed == null) Logger.log("");
@@ -63,10 +63,10 @@ function sheetObjectDictionaryTap(tap: GasTap): void {
 		Logger.log(expected);
 		t.deepEqual(observed, expected, "proper instance translation");
 
-		let mice: MouseObject[] = sod.translate();
-		let firstMouse: MouseObject = mice[0];
-		firstMouse.cageId = null;
-		observed = sod.instanceToValueArray(firstMouse);
+		let students: StudentObject[] = sod.translate();
+		let firstStudent: StudentObject = students[0];
+		firstStudent.id = null;
+		observed = sod.instanceToValueArray(firstStudent);
 		t.equal(observed, null, "an instance that fails to validate should return null for a value array");
 	});
 

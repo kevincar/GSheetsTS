@@ -1,11 +1,11 @@
 function sheetTap(tap: GasTap):void {
 
 	let spreadsheet: Spreadsheet = new Spreadsheet();
-	let testSheet: Sheet = new Sheet(spreadsheet, "Mice");
+	let testSheet: Sheet = new Sheet(spreadsheet, "Students");
 
 	tap.test("Sheet constructor should set the name", (t: test): void => {
 		let observed: string = testSheet.name;
-		let expected: string = "Mice";
+		let expected: string = "Students";
 		t.equal(observed, expected, "name is set");
 	});
 
