@@ -70,6 +70,17 @@ function sheetObjectDictionaryTap(tap: GasTap): void {
 		t.equal(observed, null, "an instance that fails to validate should return null for a value array");
 	});
 
+	tap.test("Column Shift Test", (t: test): void => {
+		let columnShiftSheet: Sheet = new Sheet(ss, "ColShiftTest");
+		let studentSOD: SheetObjectDictionary<StudentObject> = new SheetObjectDictionary(StudentObject, columnShiftSheet);
+		let students: StudentObject[] = studentSOD.translate();
+		let initial: StudentObject = students[0];
+		let observed: number | null = initial.id;
+		let expected: number = 9;
+		t.equal(observed, expected, "IDs did match when columns shifted");
+
+		// Duplicate the row
+	});
 	return;
 }
 
