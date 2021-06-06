@@ -52,8 +52,11 @@ class SheetObjectDictionary<T extends SheetObject>{
 		return true;
 	}
 
-	static dataObjectToValues(data: SheetObjectInterface): any[] {
-		let propertyNames: string[] = Object.keys(data);
+	dataObjectToValues(data: SheetObjectInterface): any[] {
+		if (!this.sheet)
+			throw "SheetObjectDictionary needs a sheet";
+
+		let propertyNames: string[] | null = this.sheet.headers;
 
 		return propertyNames.reduce((result: any[], curProperty: string): any => {
 			let curValue: any = data[curProperty];
@@ -68,6 +71,6 @@ class SheetObjectDictionary<T extends SheetObject>{
 
 		if(!instance.validate(data) || data == {}) return null;
 
-		return SheetObjectDictionary.dataObjectToValues(data);
+		return this.dataObjectToValues(data);
 	}
 }

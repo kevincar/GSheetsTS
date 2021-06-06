@@ -381,8 +381,10 @@ var SheetObjectDictionary = /** @class */ (function () {
         this.sheet.write();
         return true;
     };
-    SheetObjectDictionary.dataObjectToValues = function (data) {
-        var propertyNames = Object.keys(data);
+    SheetObjectDictionary.prototype.dataObjectToValues = function (data) {
+        if (!this.sheet)
+            throw "SheetObjectDictionary needs a sheet";
+        var propertyNames = this.sheet.headers;
         return propertyNames.reduce(function (result, curProperty) {
             var curValue = data[curProperty];
             if (curValue == null || curValue == undefined)
@@ -395,7 +397,7 @@ var SheetObjectDictionary = /** @class */ (function () {
         var data = instance.getData();
         if (!instance.validate(data) || data == {})
             return null;
-        return SheetObjectDictionary.dataObjectToValues(data);
+        return this.dataObjectToValues(data);
     };
     return SheetObjectDictionary;
 }());

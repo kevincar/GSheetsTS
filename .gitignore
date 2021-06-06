@@ -1,0 +1,14 @@
+node_modules
+*client_secrets.json
+token.json
+.credentials
+secrets.tar
+*~
+dist/
+**/*~
+.clasprc.json
+.gclasprc.json
+clasprc.tar.gz
+creds.json
+ENCRYPT.md
+scripts/creds_update.sh
