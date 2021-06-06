@@ -1,56 +1,27 @@
 function sheetObjectTap(tap: GasTap): void {
 
 	let data = {
-		cage: "KD1",
-		ID: 1,
-		Ear: 1,
-		BackGround: null,
-		AP: 3,
-		DOB: 43165.00,
-		Source: "KD #1",
-		Sex: "M",
-		Age: 84,
-		"Project ID": "HF LC Td",
-		Location: "ML 457",
-		"Study Name": null,
-		Note: null,
-		Sac: null,
-		Breeding: null,
-		Request: null,
-		"Genotyping Files": null,
-		Cre1: "POS",
-		Cre2: null,
-		LF: null,
-		MT: null,
-		Td: "wt",
-		HF: "het",
-		LT: null,
-		MG: null,
-		HKi: null,
-		EKo: null,
-		EF: null,
-		S4Ki: null,
-		EraT: null,
-		EOx: null,
-		AtCe: null
+		name: "Eric Davis",
+		id: 9,
+		birthday: new Date("12/9/1992"),
+		gender: "M",
+		grade: 4,
+		teacher: "Mrs.Petri",
+		GPA: 3.8
 	};
-	let mouse: MouseObject = new MouseObject(data);
+
+	let student: StudentObject = new StudentObject(data);
 
 	tap.test("Constructor should work", (t: test) => {
-		t.equal(mouse.cageId, "KD1", "cageID successfully transfered");
-		t.equal(mouse.id, 1, "id");
-		t.ok(mouse.genotypes, "genotypes should not be null");
-
-		if(!mouse.genotypes) return;
-		t.equal(typeof(mouse.genotypes.LF), "undefined", "no LF");
-		t.equal(mouse.genotypes.HF, "het", "HF Genotype");
-		t.equal(mouse.genotypes.LC, "POS", "LC genotype");
+		t.equal(student.name, "Eric Davis", "name successfully transfered");
+		t.equal(student.id, 9, "id");
+		t.ok(student.birthday, "birthday should not be null");
 	});
 
 	tap.test("getData should work", (t: test): void => {
-		let destructed = mouse.getData();
+		let destructed = student.getData();
 
-		t.deepEqual(destructed, data, "getData mouse data for write");
+		t.deepEqual(destructed, data, "getData student data for write");
 	});
 
 	tap.test("convertFromGDate", (t: test): void => {
