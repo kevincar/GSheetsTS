@@ -35,17 +35,20 @@ function sheetObjectDictionaryTap(tap: GasTap): void {
 	});
 
 	tap.test("dataObjectToValues", (t: test): void => {
+		let sheet: Sheet = new Sheet(ss, "ColShiftTest");
+		let sod: SheetObjectDictionary<StudentObject> = new SheetObjectDictionary(StudentObject, sheet);
 		let data = {
-			a: "1",
-			b: "2",
-			d: "4",
-			e: null,
-			f: "6"
+			name: "James",
+			id: 2,
+			birthday: new Date("9/30/1997"),
+			gender: "M",
+			grade: 2,
+			teacher: "Mrs. Morning",
+			GPA: 2.0
 		};
-
-		let values: any[] = SheetObjectDictionary.dataObjectToValues(data);
-		t.equal(values[0], "1", "values test 1");
-		t.equal(values[3], "", "values test 3");
+		let values: any[] = sod.dataObjectToValues(data);
+		t.equal(values[0], "2", "id sorted to first value");
+		t.equal(values[1], "James", "name sorted to second value");
 	});
 
 	tap.test("instanceToValueArray", (t: test): void => {
